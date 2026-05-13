@@ -206,19 +206,66 @@ namespace E_commerce_Website__Skincare_.Controllers
         // GET: /Admin/Categories
         public async Task<IActionResult> Categories()
         {
-            return View(_categories);
+            var categories = await _context.Categories
+                                   .Include(c => c.Products)
+                                   .ToListAsync();
+            return View(categories);
         }
 
         // POST: /Admin/AddCategory
         [HttpPost]
-        public IActionResult AddCategory(Category newCat)
+        public async Task<IActionResult> AddCategory(Category category)
         {
-            if (ModelState.IsValid)
-            {
-                newCat.Id = _categories.Count + 1;
-                _categories.Add(newCat);
-            }
+            _context.Categories.Add(category);
+
+            await _context.SaveChangesAsync();
+
             return RedirectToAction("Categories");
+        }
+
+        // POST: /Admin/EditCategory
+        [HttpPost]
+        public async Task<IActionResult> EditCategory(Category category)
+        {
+            var existingCategory = await _context.Categories
+                .FindAsync(category.Id);
+
+            if (existingCategory == null)
+            {
+                return NotFound();
+            }
+
+            existingCategory.Name = category.Name;
+            existingCategory.ImageUrl = category.ImageUrl;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Categories");
+        }
+
+        // POST: /Admin/DeleteCategory
+        [HttpPost]
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+            var category = await _context.Categories
+                .Include(c => c.Products) // Load the related products
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (category == null)
+            {
+                return Json(new { success = false, message = "Error: Category not found" });
+            }
+
+            // Check if category is empty before allowing delete
+            if (category.Products != null && category.Products.Any())
+            {
+                return Json(new { success = false, message = "Cannot delete: This category contains products." });
+            }
+
+            _context.Categories.Remove(category);
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, message = "Category deleted successfully" });
         }
     }
 }
