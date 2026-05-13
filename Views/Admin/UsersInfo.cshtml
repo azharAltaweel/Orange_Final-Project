@@ -1,0 +1,80 @@
+﻿@using E_commerce_Website__Skincare_.Models
+@model IEnumerable<ApplicationUser>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<div class="container-fluid p-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold">Users Information</h2>
+            <p class="text-muted">Manage all users</p>
+        </div>
+
+        @* <button class="btn btn-dark">
+            Add User
+        </button> *@
+
+    </div>
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-light">
+
+                    <tr>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Username</th>
+                        @* <th>Actions</th> *@
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+
+                            <td>@user.FullName</td>
+
+                            <td>@user.Email</td>
+
+                            <td>@user.PhoneNumber</td>
+
+                            <td>@user.UserName</td>
+
+                            @* <td>
+
+                                <button class="btn btn-sm btn-primary">
+                                    Edit
+                                </button>
+
+                                <button class="btn btn-sm btn-danger">
+                                    Delete
+                                </button>
+
+                            </td> *@
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
