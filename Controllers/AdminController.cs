@@ -196,5 +196,29 @@ namespace E_commerce_Website__Skincare_.Controllers
 
             return Json(new { success = true, messsage = "Profile updated successfully" });
         }
+
+        // Mock database
+        private static List<Category> _categories = new List<Category>
+        {
+            new Category { Id = 1, Name = "Serums", ImageUrl = "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=200"}
+        };
+
+        // GET: /Admin/Categories
+        public async Task<IActionResult> Categories()
+        {
+            return View(_categories);
+        }
+
+        // POST: /Admin/AddCategory
+        [HttpPost]
+        public IActionResult AddCategory(Category newCat)
+        {
+            if (ModelState.IsValid)
+            {
+                newCat.Id = _categories.Count + 1;
+                _categories.Add(newCat);
+            }
+            return RedirectToAction("Categories");
+        }
     }
 }
