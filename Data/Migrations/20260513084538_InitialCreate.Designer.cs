@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace E_commerce_Website__Skincare_.Data.Migrations
+namespace E_commerce_Website__Skincare_.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260511092939_AddMyNewModels")]
-    partial class AddMyNewModels
+    [Migration("20260513084538_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -95,6 +95,31 @@ namespace E_commerce_Website__Skincare_.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("E_commerce_Website__Skincare_.Models.CartItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("CartItems");
+                });
+
             modelBuilder.Entity("E_commerce_Website__Skincare_.Models.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -115,6 +140,32 @@ namespace E_commerce_Website__Skincare_.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("E_commerce_Website__Skincare_.Models.Discount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Percentage")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Discounts");
                 });
 
             modelBuilder.Entity("E_commerce_Website__Skincare_.Models.Order", b =>
@@ -175,6 +226,35 @@ namespace E_commerce_Website__Skincare_.Data.Migrations
                     b.ToTable("OrderItems");
                 });
 
+            modelBuilder.Entity("E_commerce_Website__Skincare_.Models.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TransactionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("Payments");
+                });
+
             modelBuilder.Entity("E_commerce_Website__Skincare_.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -190,6 +270,9 @@ namespace E_commerce_Website__Skincare_.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("DiscountId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -204,6 +287,8 @@ namespace E_commerce_Website__Skincare_.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("DiscountId");
 
                     b.ToTable("Products");
                 });
@@ -394,10 +479,12 @@ namespace E_commerce_Website__Skincare_.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -434,10 +521,12 @@ namespace E_commerce_Website__Skincare_.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -445,6 +534,17 @@ namespace E_commerce_Website__Skincare_.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("E_commerce_Website__Skincare_.Models.CartItem", b =>
+                {
+                    b.HasOne("E_commerce_Website__Skincare_.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("E_commerce_Website__Skincare_.Models.Order", b =>
@@ -477,6 +577,17 @@ namespace E_commerce_Website__Skincare_.Data.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("E_commerce_Website__Skincare_.Models.Payment", b =>
+                {
+                    b.HasOne("E_commerce_Website__Skincare_.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("E_commerce_Website__Skincare_.Models.Product", b =>
                 {
                     b.HasOne("E_commerce_Website__Skincare_.Models.Category", "Category")
@@ -484,6 +595,10 @@ namespace E_commerce_Website__Skincare_.Data.Migrations
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("E_commerce_Website__Skincare_.Models.Discount", null)
+                        .WithMany("Products")
+                        .HasForeignKey("DiscountId");
 
                     b.Navigation("Category");
                 });
@@ -611,6 +726,11 @@ namespace E_commerce_Website__Skincare_.Data.Migrations
                 });
 
             modelBuilder.Entity("E_commerce_Website__Skincare_.Models.Category", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("E_commerce_Website__Skincare_.Models.Discount", b =>
                 {
                     b.Navigation("Products");
                 });

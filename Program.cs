@@ -116,6 +116,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
             errorNumbersToAdd: null);
     }));
 
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Identity + Roles
