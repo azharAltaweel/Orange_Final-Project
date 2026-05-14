@@ -108,8 +108,6 @@ namespace E_commerce_Website__Skincare_.Controllers
             return RedirectToAction("ProductsInfo");
         }
 
-
-
         [HttpPost]
         public async Task<IActionResult> DeleteProduct(int id)
         {
@@ -119,37 +117,59 @@ namespace E_commerce_Website__Skincare_.Controllers
 
             if (product == null)
             {
-                return NotFound();
-            }
-
-            // DELETE IMAGES FROM FOLDER
-
-            foreach (var image in product.Images)
-            {
-                var oldPath = Path.Combine(
-                    Directory.GetCurrentDirectory(),
-                    "wwwroot",
-                    image.ImageUrl.TrimStart('/'));
-
-                if (System.IO.File.Exists(oldPath))
+                return Json(new
                 {
-                    System.IO.File.Delete(oldPath);
-                }
+                    success = false,
+                    message = "Product not found"
+                });
             }
 
-            // DELETE IMAGES FROM DATABASE
+            try
+            {
+                // DELETE IMAGES FROM FOLDER
+                if (product.Images != null && product.Images.Any())
+                {
+                    foreach (var image in product.Images)
+                    {
+                        if (string.IsNullOrEmpty(image.ImageUrl))
+                            continue;
 
-            _context.ProductImages.RemoveRange(product.Images);
+                        var filePath = Path.Combine(
+                            Directory.GetCurrentDirectory(),
+                            "wwwroot",
+                            image.ImageUrl.TrimStart('/', '\\'));
 
-            // DELETE PRODUCT
+                        if (System.IO.File.Exists(filePath))
+                        {
+                            System.IO.File.Delete(filePath);
+                        }
+                    }
 
-            _context.Products.Remove(product);
+                    // DELETE IMAGES FROM DATABASE
+                    _context.ProductImages.RemoveRange(product.Images);
+                }
 
-            await _context.SaveChangesAsync();
+                // DELETE PRODUCT
+                _context.Products.Remove(product);
 
-            return RedirectToAction("ProductsInfo");
+                await _context.SaveChangesAsync();
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Product deleted successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Something went wrong while deleting product.",
+                    error = ex.Message // remove in production if needed
+                });
+            }
         }
-
         [HttpPost]
         public async Task<IActionResult> EditProduct(
             Product updatedProduct,
