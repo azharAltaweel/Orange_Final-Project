@@ -1,19 +1,18 @@
-﻿@using E_commerce_Website__Skincare_.Models
-
-@model IEnumerable<Product>
+﻿@model IEnumerable<E_commerce_Website__Skincare_.Models.Product>
 
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
+
 <div class="container-fluid p-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <div>
-            <h2 class="fw-bold">Product Management</h2>
-            <p class="text-muted">
-                Add, edit, delete, and manage products
-            </p>
+            <h2 class="fw-bold">
+                Products Management
+            </h2>
+
         </div>
 
         <button class="btn btn-dark"
@@ -25,32 +24,27 @@
         </button>
 
     </div>
-    <div class="row mb-4">
 
-        <div class="col-md-4">
+    <!-- PRODUCTS TABLE -->
 
-            <input type="text"
-                   class="form-control"
-                   placeholder="Search products..." />
-
-        </div>
-
-    </div>
-    <div class="card shadow-sm border-0">
+    <div class="card border-0 shadow-sm">
 
         <div class="card-body">
 
-            <table class="table table-hover align-middle">
+            <table class="table custom-table align-middle">
 
                 <thead class="table-light">
 
                     <tr>
+
                         <th>Image</th>
                         <th>Product</th>
                         <th>Category</th>
                         <th>Price</th>
+                        <th>Discount</th>
                         <th>Stock</th>
                         <th>Actions</th>
+
                     </tr>
 
                 </thead>
@@ -63,34 +57,277 @@
 
                             <td>
 
-                                <img src="@(product.Images.FirstOrDefault()?.ImageUrl)"
-                                     width="60"
-                                     height="60"
-                                     class="rounded object-fit-cover" />
+                                @if (product.Images != null && product.Images.Any())
+                                {
+                                    <img src="@product.Images.First().ImageUrl"
+                                         width="65"
+                                         height="65"
+                                         class="rounded-3 border"
+                                         style="object-fit:cover;" />
+                                }
 
                             </td>
 
-                            <td>@product.Name</td>
-
-                            <td>@product.Category?.Name</td>
-
-                            <td>$@product.Price</td>
-
-                            <td>@product.StockQuantity</td>
+                            <td>
+                                @product.Name
+                            </td>
 
                             <td>
+                                @product.Category?.Name
+                            </td>
 
-                                <button class="btn btn-sm btn-primary">
+                            <td>
+                                $@product.Price
+                            </td>
+                            <td>
+                                @if (product.Discount != null)
+                                {
+                                    <span class="badge bg-success">
+                                        @product.Discount.Percentage%
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">
+                                        No Discount
+                                    </span>
+                                }
+                            </td>
+
+                            <td>
+                                @product.StockQuantity
+                            </td>
+                            <td class="d-flex gap-2 m-1">
+                                <!-- EDIT BUTTON -->
+
+                                <button class="btn btn-primary btn-sm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editProductModal-@product.Id">
+
                                     Edit
+
                                 </button>
 
-                                <button class="btn btn-sm btn-danger">
-                                    Delete
-                                </button>
+                                <!-- DELETE BUTTON -->
+                                <form asp-action="DeleteProduct"
+                                      method="post"
+                                      onsubmit="return confirm('Are you sure?')">
+
+                                    <input type="hidden"
+                                           name="id"
+                                           value="@product.Id" />
+
+                                    <button type="submit"
+                                            class="btn btn-danger btn-sm">
+
+                                        Delete
+
+                                    </button>
+
+                                </form>
 
                             </td>
 
                         </tr>
+
+                        <!-- EDIT MODAL  -->
+                        <div class="modal fade"
+                             id="editProductModal-@product.Id"
+                             tabindex="-1">
+
+                            <div class="modal-dialog modal-lg">
+
+                                <div class="modal-content">
+
+                                    <form asp-controller="Admin" asp-action="EditProduct"
+                                          method="post"
+                                          enctype="multipart/form-data">
+
+                                        <input type="hidden"
+                                               name="Id"
+                                               value="@product.Id" />
+
+                                        <div class="modal-header">
+
+                                            <h5 class="modal-title">
+                                                Edit Product
+                                            </h5>
+
+                                            <button type="button"
+                                                    class="btn-close"
+                                                    data-bs-dismiss="modal">
+                                            </button>
+
+                                        </div>
+
+                                        <div class="modal-body">
+
+                                            <!-- NAME -->
+
+                                            <div class="mb-3">
+
+                                                <label class="form-label">
+                                                    Product Name
+                                                </label>
+
+                                                <input type="text"
+                                                       name="Name"
+                                                       value="@product.Name"
+                                                       class="form-control" />
+
+                                            </div>
+
+                                            <!-- DESCRIPTION -->
+
+                                            <div class="mb-3">
+
+                                                <label class="form-label">
+                                                    Description
+                                                </label>
+
+                                                <textarea name="Description"
+                                                      class="form-control">@product.Description</textarea>
+
+                                            </div>
+
+                                            <!-- PRICE -->
+
+                                            <div class="mb-3">
+
+                                                <label class="form-label">
+                                                    Price
+                                                </label>
+
+                                                <input type="number"
+                                                       step="0.01"
+                                                       name="Price"
+                                                       value="@product.Price"
+                                                       class="form-control" />
+
+                                            </div>
+                                            <div class="mb-3">
+
+                                                <label class="form-label">
+                                                    Discount
+                                                </label>
+
+                                                <select name="DiscountId"
+                                                        class="form-select">
+
+                                                    <option value="">
+                                                        No Discount
+                                                    </option>
+
+                                                    @foreach (var discount in ViewBag.Discounts)
+                                                    {
+                                                        if (product.DiscountId == discount.Id)
+                                                        {
+                                                            <option value="@discount.Id" selected>
+                                                                @discount.Title - @discount.Percentage%
+                                                            </option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@discount.Id">
+                                                                @discount.Title - @discount.Percentage%
+                                                            </option>
+                                                        }
+                                                    }
+
+                                                </select>
+
+                                            </div>
+
+                                            <!-- STOCK -->
+
+                                            <div class="mb-3">
+
+                                                <label class="form-label">
+                                                    Stock Quantity
+                                                </label>
+
+                                                <input type="number"
+                                                       name="StockQuantity"
+                                                       value="@product.StockQuantity"
+                                                       class="form-control" />
+
+                                            </div>
+
+                                            <!-- CATEGORY -->
+
+                                            <div class="mb-3">
+
+                                                <label class="form-label">
+                                                    Category
+                                                </label>
+
+                                                <select name="CategoryId"
+                                                        class="form-select">
+
+                                                    @foreach (var category in ViewBag.Categories)
+                                                    {
+                                                        if (category.Id == product.CategoryId)
+                                                        {
+                                                            <option value="@category.Id" selected>
+                                                                @category.Name
+                                                            </option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@category.Id">
+                                                                @category.Name
+                                                            </option>
+                                                        }
+                                                    }
+
+                                                </select>
+
+                                            </div>
+
+                                            <!-- NEW IMAGES -->
+
+                                            <div class="mb-3">
+
+                                                <label class="form-label">
+                                                    Upload New Images
+                                                </label>
+
+                                                <input type="file"
+                                                       name="images"
+                                                       multiple
+                                                       accept="image/*"
+                                                       class="form-control" />
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="modal-footer">
+
+                                            <button type="button"
+                                                    class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">
+
+                                                Close
+
+                                            </button>
+
+                                            <button type="submit"
+                                                    class="btn btn-dark">
+
+                                                Save Changes
+
+                                            </button>
+
+                                        </div>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+                        </div>
                     }
 
                 </tbody>
@@ -103,6 +340,7 @@
 
 </div>
 
+<!-- ADD PRODUCT MODAL -->
 
 <div class="modal fade"
      id="addProductModal"
@@ -112,84 +350,121 @@
 
         <div class="modal-content">
 
-            <div class="modal-header">
+            <form asp-action="AddProduct"
+                  method="post"
+                  enctype="multipart/form-data">
 
-                <h5 class="modal-title">
-                    Add Product
-                </h5>
+                <div class="modal-header">
 
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
-                </button>
+                    <h5 class="modal-title">
+                        Add Product
+                    </h5>
 
-            </div>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
 
-            <div class="modal-body">
+                </div>
 
-                <form>
+                <div class="modal-body">
 
-                    <div class="row">
-
-                        <div class="col-md-6 mb-3">
-
-                            <label>Product Name</label>
-
-                            <input type="text"
-                                   class="form-control" />
-
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-
-                            <label>Price</label>
-
-                            <input type="number"
-                                   class="form-control" />
-
-                        </div>
-
-                    </div>
+                    <!-- PRODUCT NAME -->
 
                     <div class="mb-3">
 
-                        <label>Description</label>
+                        <label class="form-label">
+                            Product Name
+                        </label>
 
-                        <textarea class="form-control"></textarea>
-
-                    </div>
-
-                    <div class="row">
-
-                        <div class="col-md-6 mb-3">
-
-                            <label>Stock</label>
-
-                            <input type="number"
-                                   class="form-control" />
-
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-
-                            <label>Discount</label>
-
-                            <input type="number"
-                                   class="form-control" />
-
-                        </div>
+                        <input type="text"
+                               name="Name"
+                               class="form-control" />
 
                     </div>
+
+                    <!-- DESCRIPTION -->
 
                     <div class="mb-3">
 
-                        <label>Category</label>
+                        <label class="form-label">
+                            Description
+                        </label>
 
-                        <select class="form-select">
+                        <textarea name="Description"
+                                  class="form-control">
+                        </textarea>
+
+                    </div>
+
+                    <!-- PRICE -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Price
+                        </label>
+
+                        <input type="number"
+                               step="0.01"
+                               name="Price"
+                               class="form-control" />
+
+                    </div>
+                    <!-- DISCOUNT -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Discount
+                        </label>
+
+                        <select name="DiscountId"
+                                class="form-select">
+
+                            <option value="">
+                                No Discount
+                            </option>
+
+                            @foreach (var discount in ViewBag.Discounts)
+                            {
+                                <option value="@discount.Id">
+                                    @discount.Title - @discount.Percentage%
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+                    <!-- STOCK -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Stock Quantity
+                        </label>
+
+                        <input type="number"
+                               name="StockQuantity"
+                               class="form-control" />
+
+                    </div>
+
+                    <!-- CATEGORY -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Category
+                        </label>
+
+                        <select name="CategoryId"
+                                class="form-select">
 
                             @foreach (var category in ViewBag.Categories)
                             {
-                                <option>
+                                <option value="@category.Id">
                                     @category.Name
                                 </option>
                             }
@@ -198,37 +473,44 @@
 
                     </div>
 
+                    <!-- IMAGES -->
+
                     <div class="mb-3">
 
-                        <label>Upload Images</label>
+                        <label class="form-label">
+                            Product Images
+                        </label>
 
                         <input type="file"
+                               name="images"
                                multiple
                                accept="image/*"
                                class="form-control" />
 
                     </div>
 
-                </form>
+                </div>
 
-            </div>
+                <div class="modal-footer">
 
-            <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
 
-                <button class="btn btn-secondary"
-                        data-bs-dismiss="modal">
+                        Close
 
-                    Cancel
+                    </button>
 
-                </button>
+                    <button type="submit"
+                            class="btn btn-dark">
 
-                <button class="btn btn-dark">
+                        Save Product
 
-                    Save Product
+                    </button>
 
-                </button>
+                </div>
 
-            </div>
+            </form>
 
         </div>
 
