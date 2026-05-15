@@ -21,6 +21,9 @@ namespace E_commerce_Website__Skincare_.Models
         public int CategoryId { get; set; }
         public Category Category { get; set; }
 
+        public int? DiscountId { get; set; }
+
+        public Discount? Discount { get; set; }
         public virtual ICollection<ProductImage> Images { get; set; }
         public virtual ICollection<Review> Reviews { get; set; }
 

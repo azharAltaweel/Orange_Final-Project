@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace E_commerce_Website__Skincare_.Controllers
 {
@@ -24,6 +25,7 @@ namespace E_commerce_Website__Skincare_.Controllers
             _context = context;
         }
 
+
         // USERS PAGE
         public async Task<IActionResult> UsersInfo()
         {
@@ -33,17 +35,225 @@ namespace E_commerce_Website__Skincare_.Controllers
         }
 
         // PRODUCTS PAGE
+
         public async Task<IActionResult> ProductsInfo()
         {
             var products = await _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Images)
+                 .Include(p => p.Discount)
                 .ToListAsync();
 
             ViewBag.Categories = await _context.Categories.ToListAsync();
-
+            ViewBag.Discounts = await _context.Discounts.ToListAsync();
             return View(products);
         }
+
+        // ADD PRODUCT
+
+        [HttpPost]
+        public async Task<IActionResult> AddProduct(Product product,List<IFormFile> images)
+        {
+              // save product first
+
+                _context.Products.Add(product);
+
+                await _context.SaveChangesAsync();
+
+                // SAVE IMAGES
+
+                if (images != null && images.Count > 0)
+                {
+                    foreach (var image in images)
+                    {
+                        // UNIQUE FILE NAME
+
+                        var fileName = Guid.NewGuid().ToString()
+                                       + Path.GetExtension(image.FileName);
+
+                        // FILE PATH
+
+                        var path = Path.Combine(
+                            Directory.GetCurrentDirectory(),
+                            "wwwroot/images/products",
+                            fileName);
+
+                        // SAVE IMAGE INSIDE WWWROOT
+
+                        using (var stream = new FileStream(path, FileMode.Create))
+                        {
+                            await image.CopyToAsync(stream);
+                        }
+
+                        // SAVE IMAGE INSIDE DATABASE
+
+                        ProductImage productImage = new ProductImage
+                        {
+                            ImageUrl = "/images/products/" + fileName,
+
+                            ProductId = product.Id
+                        };
+
+                        _context.ProductImages.Add(productImage);
+                    }
+
+                    await _context.SaveChangesAsync();
+                }
+
+                return RedirectToAction("ProductsInfo");
+            
+
+            ViewBag.Categories = await _context.Categories.ToListAsync();
+
+            return RedirectToAction("ProductsInfo");
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            var product = await _context.Products
+                .Include(p => p.Images)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            // DELETE IMAGES FROM FOLDER
+
+            foreach (var image in product.Images)
+            {
+                var oldPath = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "wwwroot",
+                    image.ImageUrl.TrimStart('/'));
+
+                if (System.IO.File.Exists(oldPath))
+                {
+                    System.IO.File.Delete(oldPath);
+                }
+            }
+
+            // DELETE IMAGES FROM DATABASE
+
+            _context.ProductImages.RemoveRange(product.Images);
+
+            // DELETE PRODUCT
+
+            _context.Products.Remove(product);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("ProductsInfo");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditProduct(
+            Product updatedProduct,
+            List<IFormFile> images)
+        {
+            // GET PRODUCT FROM DATABASE
+
+            var product = await _context.Products
+                .Include(p => p.Images)
+                .FirstOrDefaultAsync(p => p.Id == updatedProduct.Id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            // UPDATE PRODUCT DATA
+
+            product.Name = updatedProduct.Name;
+            product.Description = updatedProduct.Description;
+            product.Price = updatedProduct.Price;
+            product.StockQuantity = updatedProduct.StockQuantity;
+            product.CategoryId = updatedProduct.CategoryId;
+            product.DiscountId = updatedProduct.DiscountId;
+
+            // REPLACE IMAGES
+
+            if (images != null && images.Count > 0)
+            {
+                // DELETE OLD IMAGES FROM WWWROOT
+
+                foreach (var oldImage in product.Images)
+                {
+                    var oldPath = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot",
+                        oldImage.ImageUrl.TrimStart('/'));
+
+                    if (System.IO.File.Exists(oldPath))
+                    {
+                        System.IO.File.Delete(oldPath);
+                    }
+                }
+
+                // DELETE OLD IMAGES FROM DATABASE
+
+                _context.ProductImages.RemoveRange(product.Images);
+
+                // ADD NEW IMAGES
+
+                foreach (var image in images)
+                {
+                    // GENERATE UNIQUE FILE NAME
+
+                    var fileName = Guid.NewGuid().ToString()
+                                   + Path.GetExtension(image.FileName);
+
+                    // CREATE FILE PATH
+
+                    var path = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot/images/products",
+                        fileName);
+
+                    // SAVE IMAGE IN WWWROOT
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await image.CopyToAsync(stream);
+                    }
+
+                    // SAVE IMAGE IN DATABASE
+
+                    ProductImage productImage = new ProductImage
+                    {
+                        ImageUrl = "/images/products/" + fileName,
+                        ProductId = product.Id
+                    };
+
+                    _context.ProductImages.Add(productImage);
+                }
+            }
+
+            // SAVE CHANGES
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("ProductsInfo");
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // Action to  fetch info orders from db to show in view 
         public async Task<IActionResult> OrdersInfo()
