@@ -1,0 +1,104 @@
+@{
+    ViewData["Title"] = "Your Ritual Cart";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/cart.css" asp-append-version="true" />
+}
+
+<div class="container cart-container">
+    <h2 class="cart-title animate-fade-in">Your Ritual Cart</h2>
+
+    <div class="row">
+        <!-- Cart Items List -->
+        <div class="col-lg-8" id="cart-items">
+            <!-- Items will be injected here by JS -->
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary-custom" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Sidebar -->
+        <div class="col-lg-4">
+            <div class="summary-card animate-fade-in" style="animation-delay: 0.2s">
+                <h5 class="summary-title">Order Summary</h5>
+
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <strong id="cart-subtotal">$0.00</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <strong class="text-success">Free</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Estimated Tax</span>
+                    <strong id="cart-tax">$0.00</strong>
+                </div>
+
+                <div class="summary-row" id="discount-row" style="display: none;">
+                    <span class="text-success">Discount</span>
+                    <strong id="discount-val" class="text-success">-$0.00</strong>
+                </div>
+
+                <div class="summary-total">
+                    <div class="d-flex justify-content-between">
+                        <span>Total</span>
+                        <span id="cart-total">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="coupon-section">
+                    <input type="text" class="form-control coupon-input" placeholder="Promo Code">
+                    <button class="btn coupon-btn" onclick="applyPromoCode()">Apply</button>
+                </div>
+
+                <button class="checkout-btn" onclick="proceedToCheckout()">
+                    Proceed to Checkout
+                </button>
+
+                <div class="mt-4 text-center">
+                    <small class="text-muted">
+                        <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">lock</span>
+                        Secure SSL Checkout
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/cart.js" asp-append-version="true"></script>
+    <script>
+        // Seed some data if empty for demonstration
+        if (!localStorage.getItem('glowcare_cart') || JSON.parse(localStorage.getItem('glowcare_cart')).length === 0) {
+            const demoItems = [
+                {
+                    id: 101,
+                    name: "Botanical Radiance Serum",
+                    price: 84.00,
+                    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB_hk6q-ldcBAlpz-b_dpLYvoEV9hz9g1g_KtAHfaeUcBtivQMOs_gWPeVlZPOV2TjkzPkd7OFYuq7pB2m-7peaCsxLmB192JrKkKT7mP1VP2mny94hqQ6t6hkW9Xui5oya90sS3uNcSz-t5qrZ--H7HH67MV6XrnOHKLJLKaHbef816PwGSlk6VmhDmCqsEowDNVd4ghFm8qm5r-cot8JeE0idtgxoVjxDkt0K6TRrb_CTtqIZAPV_GqpManFdzofZiLXX2rAFcCQ",
+                    size: "30ml",
+                    category: "Anti-Aging",
+                    quantity: 1
+                },
+                {
+                    id: 102,
+                    name: "Cloud Hydration Cream",
+                    price: 62.00,
+                    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAvtJTm1SUo3XrEJQMeXmNJlGEkg4r_W1w4mFo7aYfQu0evJj4mgsqiGY79ulCPJQ_tlzwB3s_wSho0tNFLSOvARf-po0Gebs6lHPn13aN0DvzWCuPimfaNSYuM7WJoyTmojdEiifNmfhv80c-TegFQU6S54BdbZ3ofuykzPVloGvZWwyd98sE5QZtXFFp61eihjFuP8ytLKbd_d554frasnjA1alRRzhI55iLMCnjV-UBBX5Wbwrap2wqW-DZn7fXA5XlWIT69dAc",
+                    size: "50ml",
+                    category: "Moisturizer",
+                    quantity: 1
+                }
+            ];
+            localStorage.setItem('glowcare_cart', JSON.stringify(demoItems));
+            loadCart(); // Refresh UI
+        }
+    </script>
+}
