@@ -5,32 +5,44 @@ document.addEventListener('DOMContentLoaded', () => {
     loadCart();
 });
 
-function loadCart() {
+async function loadCart() {
     let cart = JSON.parse(localStorage.getItem('glowcare_cart')) || [];
     
     // Seed some data if empty for testing
     if (cart.length === 0) {
-        cart = [
-            {
-                id: 101,
-                name: "Botanical Radiance Serum",
-                price: 84.00,
-                image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=400",
-                size: "30ml",
-                category: "Anti-Aging",
-                quantity: 1
-            },
-            {
-                id: 102,
-                name: "Cloud Hydration Cream",
-                price: 62.00,
-                image: "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&q=80&w=400",
-                size: "50ml",
-                category: "Moisturizer",
-                quantity: 1
+        try {
+            const response = await fetch('/Cart/GetDefaultCartItems');
+            if (response.ok) {
+                cart = await response.json();
+                localStorage.setItem('glowcare_cart', JSON.stringify(cart));
+                if (typeof updateCartBadge === 'function') updateCartBadge();
+            } else {
+                throw new Error('Failed to fetch default products');
             }
-        ];
-        localStorage.setItem('glowcare_cart', JSON.stringify(cart));
+        } catch (error) {
+            console.error('Error fetching dynamic cart items from DB:', error);
+            cart = [
+                {
+                    id: 101,
+                    name: "Botanical Radiance Serum",
+                    price: 84.00,
+                    image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=400",
+                    size: "30ml",
+                    category: "Anti-Aging",
+                    quantity: 1
+                },
+                {
+                    id: 102,
+                    name: "Cloud Hydration Cream",
+                    price: 62.00,
+                    image: "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&q=80&w=400",
+                    size: "50ml",
+                    category: "Moisturizer",
+                    quantity: 1
+                }
+            ];
+            localStorage.setItem('glowcare_cart', JSON.stringify(cart));
+        }
     }
 
     renderCart(cart);
