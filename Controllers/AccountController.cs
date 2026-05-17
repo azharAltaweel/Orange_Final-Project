@@ -30,6 +30,10 @@ namespace E_commerce_Website__Skincare_.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
+                if (User.IsInRole("Admin"))
+                {
+                    return RedirectToAction("Dashboard", "Admin");
+                }
                 return RedirectToAction("Profile");
             }
             return View(new LoginViewModel());
@@ -50,6 +54,11 @@ namespace E_commerce_Website__Skincare_.Controllers
                     var result = await _signInManager.PasswordSignInAsync(user, loginVM.Password, loginVM.RememberMe, false);
                     if (result.Succeeded)
                     {
+                        var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+                        if (isAdmin)
+                        {
+                            return RedirectToAction("Dashboard", "Admin");
+                        }
                         return RedirectToAction("Profile");
                     }
                 }

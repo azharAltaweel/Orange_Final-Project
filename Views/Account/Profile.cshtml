@@ -21,6 +21,13 @@
             </div>
 
             <div class="card-custom p-2">
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="Admin" asp-action="Dashboard" style="color: #635f40; font-weight: 600;">
+                        <span class="material-symbols-outlined">dashboard</span> Admin Dashboard
+                    </a>
+                }
+                
                 <a asp-action="Profile" class="active-link">
                     <span class="material-symbols-outlined">person</span> Profile
                 </a>
