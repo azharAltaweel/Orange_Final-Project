@@ -204,7 +204,8 @@
     @if (TempData["Success"] != null || TempData["SuccessMessage"] != null || TempData["Error"] != null || TempData["ErrorMessage"] != null)
     {
         <script>
-            document.addEventListener("DOMContentLoaded", function() {
+            // Scripts are at bottom of <body> — DOM is already ready, no DOMContentLoaded needed
+            (function() {
                 var successMsg = '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode((string)(TempData["Success"] ?? TempData["SuccessMessage"] ?? "")))';
                 var errorMsg = '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode((string)(TempData["Error"] ?? TempData["ErrorMessage"] ?? "")))';
                 if (successMsg) {
@@ -212,7 +213,7 @@
                 } else if (errorMsg) {
                     GlowAlert.error('Oops...', errorMsg);
                 }
-            });
+            })();
         </script>
     }
 

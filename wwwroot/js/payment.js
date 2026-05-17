@@ -33,15 +33,20 @@ async function handleCompleteOrder() {
     const btn = document.querySelector('.complete-btn');
     if (!btn) return;
     
-    const originalText = btn.innerHTML;
-    
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
 
     // Simulate Payment Processing
     setTimeout(() => {
-        alert('Payment successful! Your order has been placed.');
-        localStorage.removeItem('glowcare_cart');
-        window.location.href = '/'; // Go home
+        if (typeof GlowAlert !== 'undefined') {
+            GlowAlert.success('Order Placed!', 'Payment successful! Your order has been placed.').then(() => {
+                localStorage.removeItem('glowcare_cart');
+                window.location.href = '/'; // Go home
+            });
+        } else {
+            alert('Payment successful! Your order has been placed.');
+            localStorage.removeItem('glowcare_cart');
+            window.location.href = '/'; // Go home
+        }
     }, 2000);
 }

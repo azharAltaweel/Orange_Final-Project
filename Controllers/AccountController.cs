@@ -57,16 +57,20 @@ namespace E_commerce_Website__Skincare_.Controllers
                         var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
                         if (isAdmin)
                         {
+                            TempData["Success"] = "Welcome back, Administrator!";
                             return RedirectToAction("Dashboard", "Admin");
                         }
+                        TempData["Success"] = "Welcome back, " + (user.FullName ?? user.UserName.Split('@')[0]) + "!";
                         return RedirectToAction("Profile");
                     }
                 }
                 ModelState.AddModelError("", "Invalid login attempt. Please check your credentials.");
+                TempData["Error"] = "Invalid login attempt. Please check your credentials.";
                 return View(loginVM);
             }
 
             ModelState.AddModelError("", "Invalid login attempt. Please check your credentials.");
+            TempData["Error"] = "Invalid login attempt. Please check your credentials.";
             return View(loginVM);
         }
 
@@ -90,6 +94,7 @@ namespace E_commerce_Website__Skincare_.Controllers
             if (user != null)
             {
                 ModelState.AddModelError("", "This email address is already in use");
+                TempData["Error"] = "This email address is already in use.";
                 return View(registerVM);
             }
 
@@ -107,6 +112,7 @@ namespace E_commerce_Website__Skincare_.Controllers
             {
                 await _userManager.AddToRoleAsync(newUser, "User");
                 await _signInManager.SignInAsync(newUser, isPersistent: false);
+                TempData["Success"] = "Account created successfully! Welcome to GlowCare.";
                 return RedirectToAction("Profile");
             }
             else
@@ -115,6 +121,7 @@ namespace E_commerce_Website__Skincare_.Controllers
                 {
                     ModelState.AddModelError("", error.Description);
                 }
+                TempData["Error"] = "Registration failed. Please check the requirements.";
                 return View(registerVM);
             }
         }

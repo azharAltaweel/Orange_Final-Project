@@ -1,4 +1,4 @@
-﻿using E_commerce_Website__Skincare_.Data;
+using E_commerce_Website__Skincare_.Data;
 using E_commerce_Website__Skincare_.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -102,11 +102,11 @@ namespace E_commerce_Website__Skincare_.Controllers
                     await _context.SaveChangesAsync();
                 }
 
+                TempData["Success"] = "Product '" + product.Name + "' has been added successfully!";
                 return RedirectToAction("ProductsInfo");
             
-
             ViewBag.Categories = await _context.Categories.ToListAsync();
-
+            TempData["Error"] = "Failed to add product. Please check your data.";
             return RedirectToAction("ProductsInfo");
         }
 
@@ -149,6 +149,7 @@ namespace E_commerce_Website__Skincare_.Controllers
 
             await _context.SaveChangesAsync();
 
+            TempData["Success"] = "Product has been deleted successfully!";
             return RedirectToAction("ProductsInfo");
         }
 
@@ -239,6 +240,7 @@ namespace E_commerce_Website__Skincare_.Controllers
 
             await _context.SaveChangesAsync();
 
+            TempData["Success"] = "Product has been updated successfully!";
             return RedirectToAction("ProductsInfo");
         }
 
@@ -452,6 +454,7 @@ namespace E_commerce_Website__Skincare_.Controllers
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
 
+            TempData["Success"] = "Category '" + category.Name + "' has been added successfully!";
             return RedirectToAction("Categories");
         }
 
@@ -466,6 +469,7 @@ namespace E_commerce_Website__Skincare_.Controllers
 
             if (existingCategory == null)
             {
+                TempData["Error"] = "Category not found.";
                 return NotFound();
             }
 
@@ -504,6 +508,7 @@ namespace E_commerce_Website__Skincare_.Controllers
             
             await _context.SaveChangesAsync();
 
+            TempData["Success"] = "Category '" + category.Name + "' has been updated successfully!";
             return RedirectToAction("Categories");
         }
         // POST: /Admin/DeleteCategory

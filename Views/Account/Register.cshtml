@@ -27,6 +27,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
     
     <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <style>
         /* Icons styling */
         .navbar .material-symbols-outlined {
@@ -269,5 +270,24 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- SweetAlert2 & GlowCare Custom Alerts -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/js/glowcare-alerts.js" asp-append-version="true"></script>
+
+@if (TempData["Success"] != null || TempData["SuccessMessage"] != null || TempData["Error"] != null || TempData["ErrorMessage"] != null)
+{
+    <script>
+        (function() {
+            var successMsg = '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode((string)(TempData["Success"] ?? TempData["SuccessMessage"] ?? "")))';
+            var errorMsg = '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode((string)(TempData["Error"] ?? TempData["ErrorMessage"] ?? "")))';
+            if (successMsg) {
+                GlowAlert.success('Success!', successMsg);
+            } else if (errorMsg) {
+                GlowAlert.error('Oops...', errorMsg);
+            }
+        })();
+    </script>
+}
 </body>
 </html>

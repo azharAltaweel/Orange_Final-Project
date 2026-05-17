@@ -129,11 +129,19 @@ function applyPromoCode() {
     if (code === 'skincare') {
         activeDiscount = 0.15; // 15% discount
         appliedPromo = 'skincare';
-        alert('Promo code applied! You got a 15% discount.');
+        if (typeof GlowAlert !== 'undefined') {
+            GlowAlert.success('Success!', 'Promo code applied! You got a 15% discount.');
+        } else {
+            alert('Promo code applied! You got a 15% discount.');
+        }
     } else {
         activeDiscount = 0;
         appliedPromo = null;
-        alert('Invalid promo code.');
+        if (typeof GlowAlert !== 'undefined') {
+            GlowAlert.error('Invalid Code', 'The promo code you entered is invalid.');
+        } else {
+            alert('Invalid promo code.');
+        }
     }
 
     const cart = JSON.parse(localStorage.getItem('glowcare_cart')) || [];
@@ -158,18 +166,35 @@ function updateQty(productId, change) {
 }
 
 function removeItem(productId) {
-    let cart = JSON.parse(localStorage.getItem('glowcare_cart')) || [];
-    cart = cart.filter(item => item.id !== productId);
-    localStorage.setItem('glowcare_cart', JSON.stringify(cart));
-    renderCart(cart);
-    if (typeof updateCartBadge === 'function') updateCartBadge();
+    if (typeof GlowAlert !== 'undefined') {
+        GlowAlert.confirm('Remove Item?', 'Are you sure you want to remove this item from your ritual?').then((result) => {
+            if (result.isConfirmed) {
+                let cart = JSON.parse(localStorage.getItem('glowcare_cart')) || [];
+                cart = cart.filter(item => item.id !== productId);
+                localStorage.setItem('glowcare_cart', JSON.stringify(cart));
+                renderCart(cart);
+                if (typeof updateCartBadge === 'function') updateCartBadge();
+                GlowAlert.toast('Item removed from cart.');
+            }
+        });
+    } else {
+        let cart = JSON.parse(localStorage.getItem('glowcare_cart')) || [];
+        cart = cart.filter(item => item.id !== productId);
+        localStorage.setItem('glowcare_cart', JSON.stringify(cart));
+        renderCart(cart);
+        if (typeof updateCartBadge === 'function') updateCartBadge();
+    }
 }
 
 // Checkout Handler
 async function proceedToCheckout() {
     const cart = JSON.parse(localStorage.getItem('glowcare_cart')) || [];
     if (cart.length === 0) {
-        alert('Your cart is empty.');
+        if (typeof GlowAlert !== 'undefined') {
+            GlowAlert.error('Cart Empty', 'Your cart is empty. Add some rituals to your bag first.');
+        } else {
+            alert('Your cart is empty.');
+        }
         return;
     }
 
@@ -191,6 +216,9 @@ window.addToCart = function(product) {
     localStorage.setItem('glowcare_cart', JSON.stringify(cart));
     updateCartBadge();
     
-    // Optional: show a toast notification
-    console.log('Added to cart:', product.name);
+    if (typeof GlowAlert !== 'undefined') {
+        GlowAlert.toast('Added ' + product.name + ' to cart!');
+    } else {
+        console.log('Added to cart:', product.name);
+    }
 };
