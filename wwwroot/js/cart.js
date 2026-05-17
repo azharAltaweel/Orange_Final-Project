@@ -6,7 +6,33 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function loadCart() {
-    const cart = JSON.parse(localStorage.getItem('glowcare_cart')) || [];
+    let cart = JSON.parse(localStorage.getItem('glowcare_cart')) || [];
+    
+    // Seed some data if empty for testing
+    if (cart.length === 0) {
+        cart = [
+            {
+                id: 101,
+                name: "Botanical Radiance Serum",
+                price: 84.00,
+                image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=400",
+                size: "30ml",
+                category: "Anti-Aging",
+                quantity: 1
+            },
+            {
+                id: 102,
+                name: "Cloud Hydration Cream",
+                price: 62.00,
+                image: "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&q=80&w=400",
+                size: "50ml",
+                category: "Moisturizer",
+                quantity: 1
+            }
+        ];
+        localStorage.setItem('glowcare_cart', JSON.stringify(cart));
+    }
+
     renderCart(cart);
 }
 
@@ -21,13 +47,10 @@ function renderCart(cart) {
     if (cart.length === 0) {
         cartItemsContainer.innerHTML = `
             <div class="empty-cart animate-fade-in">
-                <span class="material-symbols-outlined" style="font-size: 64px;">shopping_basket</span>
+                <i class="bi bi-cart-x"></i>
                 <h3>Your cart is empty</h3>
                 <p class="text-muted">Explore our botanical rituals and find your glow.</p>
-                <a href="/" class="continue-shopping">
-                    <span class="material-symbols-outlined">arrow_back</span>
-                    Continue Shopping
-                </a>
+                <a href="/" class="continue-shopping">Back to Store</a>
             </div>
         `;
         subtotalEl.innerText = '$0.00';
@@ -145,45 +168,13 @@ function removeItem(productId) {
 // Checkout Handler
 async function proceedToCheckout() {
     const cart = JSON.parse(localStorage.getItem('glowcare_cart')) || [];
-    if (cart.length === 0) return;
-
-    // Show loading state
-    const btn = document.querySelector('.checkout-btn');
-    const originalText = btn.innerText;
-    btn.innerText = 'Processing...';
-    btn.disabled = true;
-
-    try {
-        // Here you would typically sync with the server
-        // Example: 
-        /*
-        const response = await fetch('/Cart/SyncAndCheckout', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(cart)
-        });
-        if (response.ok) {
-            localStorage.removeItem('glowcare_cart');
-            window.location.href = '/Checkout/Success';
-        }
-        */
-        
-        console.log('Syncing cart with server...', cart);
-        
-        // Simulating a delay
-        setTimeout(() => {
-            alert('Checkout successful! (Simulated)');
-            localStorage.removeItem('glowcare_cart');
-            loadCart();
-            btn.innerText = originalText;
-            btn.disabled = false;
-        }, 1500);
-
-    } catch (error) {
-        console.error('Checkout error:', error);
-        btn.innerText = originalText;
-        btn.disabled = false;
+    if (cart.length === 0) {
+        alert('Your cart is empty.');
+        return;
     }
+
+    // Redirect to the checkout page
+    window.location.href = '/Cart/Checkout';
 }
 
 // Helper to add items to cart (for testing or from product pages)

@@ -74,32 +74,4 @@
 
 @section Scripts {
     <script src="~/js/cart.js" asp-append-version="true"></script>
-    <script>
-        // Seed some data if empty for demonstration
-        // this test 
-        if (!localStorage.getItem('glowcare_cart') || JSON.parse(localStorage.getItem('glowcare_cart')).length === 0) {
-            const demoItems = [
-                {
-                    id: 101,
-                    name: "Botanical Radiance Serum",
-                    price: 84.00,
-                    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB_hk6q-ldcBAlpz-b_dpLYvoEV9hz9g1g_KtAHfaeUcBtivQMOs_gWPeVlZPOV2TjkzPkd7OFYuq7pB2m-7peaCsxLmB192JrKkKT7mP1VP2mny94hqQ6t6hkW9Xui5oya90sS3uNcSz-t5qrZ--H7HH67MV6XrnOHKLJLKaHbef816PwGSlk6VmhDmCqsEowDNVd4ghFm8qm5r-cot8JeE0idtgxoVjxDkt0K6TRrb_CTtqIZAPV_GqpManFdzofZiLXX2rAFcCQ",
-                    size: "30ml",
-                    category: "Anti-Aging",
-                    quantity: 1
-                },
-                {
-                    id: 102,
-                    name: "Cloud Hydration Cream",
-                    price: 62.00,
-                    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAvtJTm1SUo3XrEJQMeXmNJlGEkg4r_W1w4mFo7aYfQu0evJj4mgsqiGY79ulCPJQ_tlzwB3s_wSho0tNFLSOvARf-po0Gebs6lHPn13aN0DvzWCuPimfaNSYuM7WJoyTmojdEiifNmfhv80c-TegFQU6S54BdbZ3ofuykzPVloGvZWwyd98sE5QZtXFFp61eihjFuP8ytLKbd_d554frasnjA1alRRzhI55iLMCnjV-UBBX5Wbwrap2wqW-DZn7fXA5XlWIT69dAc",
-                    size: "50ml",
-                    category: "Moisturizer",
-                    quantity: 1
-                }
-            ];
-            localStorage.setItem('glowcare_cart', JSON.stringify(demoItems));
-            loadCart(); // Refresh UI
-        }
-    </script>
 }

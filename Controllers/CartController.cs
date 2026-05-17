@@ -8,5 +8,15 @@ namespace E_commerce_Website__Skincare_.Controllers
         {
             return View();
         }
+
+        public IActionResult Checkout()
+        {
+            return View();
+        }
+
+        public IActionResult Payment()
+        {
+            return View();
+        }
     }
 }
