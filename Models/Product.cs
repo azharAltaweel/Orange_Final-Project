@@ -7,7 +7,7 @@ namespace E_commerce_Website__Skincare_.Models
     {
         public int Id { get; set; }
         [Required]
-        [StringLength(150)]
+            [StringLength(150)]
         public string Name { get; set; }
         [Required]
         public string Description { get; set; }
@@ -21,6 +21,9 @@ namespace E_commerce_Website__Skincare_.Models
         public int CategoryId { get; set; }
         public Category Category { get; set; }
 
+        public int? DiscountId { get; set; }
+
+        public Discount? Discount { get; set; }
         public virtual ICollection<ProductImage> Images { get; set; }
         public virtual ICollection<Review> Reviews { get; set; }
 

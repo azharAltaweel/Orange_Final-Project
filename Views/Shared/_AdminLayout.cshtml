@@ -5,16 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - GlowCare Admin</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <!-- Site CSS -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/E_commerce_Website__Skincare_.styles.css" asp-append-version="true" />
+
+    <!-- Dashboard CSS -->
     <link href="~/css/dashboard.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@500&display=swap" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-    @RenderSection("Styles", required: false)
+
+    <!-- Google Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
+
 <body>
 
-    <!-- ═══ SIDEBAR ═══ -->
+    <!-- ═════════════ SIDEBAR ═════════════ -->
     <aside class="sidebar">
+
         <div class="sidebar-brand">
             <h1>GlowCare Admin</h1>
         </div>
@@ -40,7 +53,7 @@
                 <i class="fa-solid fa-users nav-icon"></i> Users
             </a>
 
-            <a asp-controller="Admin" asp-action="CategoriesInfo"
+            <a asp-controller="Admin" asp-action="Categories"
                class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "CategoriesInfo" ? "active" : "")">
                 <i class="fa-solid fa-tags nav-icon"></i> Categories
             </a>
@@ -68,20 +81,19 @@
                 </button>
             </form>
         </div>
+
     </aside>
 
-    <!-- ═══ MAIN WRAP ═══ -->
+    <!-- ═════════════ MAIN WRAPPER ═════════════ -->
     <div class="main-wrap">
 
-        <!-- TOPBAR -->
+        <!-- ═════════════ TOPBAR ═════════════ -->
         <header class="topbar">
             <span class="topbar-title">
                 Hello, @(ViewData["AdminName"] ?? "Admin")
             </span>
 
             <div class="topbar-search">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Search data..." id="globalSearch" />
             </div>
 
             <div class="topbar-user" onclick="openProfile()" title="Edit Profile">
@@ -93,37 +105,63 @@
                     @(((string)ViewData["AdminName"])?.Substring(0, 1).ToUpper() ?? "A")
                 </div>
             </div>
+
         </header>
 
-        <!-- CONTENT -->
+        <!-- ═════════════ PAGE CONTENT ═════════════ -->
         <main class="content">
+
             @RenderBody()
+
         </main>
 
         <!-- ═══ FOOTER ═══ -->
         <footer class="footer">
+
             <div class="footer-grid">
+
                 <div class="footer-brand">
+
                     <h2>GlowCare Rituals</h2>
-                    <p>Empowering administrators to manage the world's most curated skincare rituals with precision and elegance.</p>
-                    <p style="margin-top:12px;font-size:12px;">© 2024 GlowCare Rituals. All rights reserved.</p>
+
+                    <p>
+                        Empowering administrators to manage
+                        the world's most curated skincare rituals
+                        with precision and elegance.
+                    </p>
+
+                    <p style="margin-top:12px;font-size:12px;">
+                        © 2024 GlowCare Rituals.
+                        All rights reserved.
+                    </p>
+
                 </div>
+
                 <div class="footer-col">
+
                     <h4>Portal Support</h4>
+
                     <a href="#">Internal Wiki</a>
                     <a href="#">Technical Support</a>
                     <a href="#">API Documentation</a>
+
                 </div>
+
                 <div class="footer-col">
+
                     <h4>System Status</h4>
                     <p style="font-size:13px;margin-bottom:10px;">
                         <span class="status-dot"></span>All systems operational
                     </p>
                     <a href="#">Privacy Policy</a>
                     <a href="#">Terms of Service</a>
+
                 </div>
+
             </div>
+
         </footer>
+    </div>
 
     </div>
 
