@@ -209,3 +209,40 @@
 
 
 
+
+/* DISCOUNT BADGE مثل SHEIN */
+.discount-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #ff4d6d;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 20px;
+    z-index: 2;
+}
+
+/* السعر بعد الخصم */
+.discount-price {
+    color: #d60032;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+/* السعر الأصلي */
+.original-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 14px;
+}
+
+/* Hover */
+.product-card {
+    transition: .3s;
+}
+
+    .product-card:hover {
+        transform: translateY(-6px);
+    }

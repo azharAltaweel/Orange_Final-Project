@@ -89,16 +89,30 @@
 
                 @foreach (var product in Model)
                 {
+                    
+    decimal finalPrice = product.Price;
+
+    if (product.Discount != null)
+    {
+        finalPrice = product.Price -
+        (product.Price * product.Discount.Percentage / 100);
+    }
+
                     <div class="col-md-4">
 
                         <div class="card border-0 shadow-sm h-100 product-card">
+                        <div class="position-relative">
 
-                            <div class="position-relative">
+                            <img src="@product.Images.FirstOrDefault()?.ImageUrl"
+                                 class="card-img-top product-image" />
 
-                                <img src="@product.Images.FirstOrDefault()?.ImageUrl"
-                                     class="card-img-top product-image" />
+                            @if (product.Discount != null)
+                            {
+                                <span class="discount-badge">
+                                    -@product.Discount.Percentage%
+                                </span>
+                            }
 
-                            <!--عشان زر يصير شايل معلومات المنتج. -->
                             <button class="wishlist-btn position-absolute top-0 end-0 m-3"
                                     data-product-id="@product.Id"
                                     data-product-name="@product.Name"
@@ -109,7 +123,7 @@
 
                             </button>
 
-                            </div>
+                        </div>
 
                             <div class="card-body">
 
@@ -120,10 +134,30 @@
                                 <h5 class="fw-bold">
                                     @product.Name
                                 </h5>
+                            <div class="price-wrapper mt-3">
 
-                                <h6 class="fw-bold mt-3">
-                                    $@product.Price
-                                </h6>
+                                @if (product.Discount != null)
+                                {
+                                    <div class="d-flex align-items-center gap-2">
+
+                                        <h6 class="discount-price mb-0">
+                                            $@finalPrice.ToString("0.00")
+                                        </h6>
+
+                                        <span class="original-price">
+                                            $@product.Price
+                                        </span>
+
+                                    </div>
+                                }
+                                else
+                                {
+                                    <h6 class="fw-bold mb-0">
+                                        $@product.Price
+                                    </h6>
+                                }
+
+                            </div>
 
                             <a asp-controller="User" asp-action="ProductDetails"
                                    asp-route-id="@product.Id"
