@@ -38,7 +38,7 @@ namespace E_commerce_Website__Skincare_.Controllers
                 {
                     return Redirect(returnUrl);
                 }
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("HomePage", "User");
             }
             ViewData["ReturnUrl"] = returnUrl;
             return View(new LoginViewModel());
@@ -75,7 +75,7 @@ namespace E_commerce_Website__Skincare_.Controllers
                         {
                             return Redirect(returnUrl);
                         }
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("HomePage", "User");
                     }
                 }
                 ModelState.AddModelError("", "Invalid login attempt. Please check your credentials.");
@@ -97,7 +97,7 @@ namespace E_commerce_Website__Skincare_.Controllers
                 {
                     return Redirect(returnUrl);
                 }
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("HomePage", "User");
             }
             ViewData["ReturnUrl"] = returnUrl;
             return View(new RegisterViewModel());
@@ -142,7 +142,7 @@ namespace E_commerce_Website__Skincare_.Controllers
                 {
                     return Redirect(returnUrl);
                 }
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("HomePage", "User");
             }
             else
             {
@@ -221,7 +221,8 @@ namespace E_commerce_Website__Skincare_.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+            TempData["Success"] = "You have been signed out successfully. Come back soon!";
+            return RedirectToAction("HomePage", "User");
         }
 
         public IActionResult AccessDenied()

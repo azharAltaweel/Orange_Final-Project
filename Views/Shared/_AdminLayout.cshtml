@@ -75,7 +75,8 @@
         </nav>
 
         <div class="sidebar-bottom">
-            <form asp-area="Identity" asp-page="/Account/Logout" method="post">
+            <form asp-controller="Account" asp-action="Logout" method="post">
+                @Html.AntiForgeryToken()
                 <button type="submit" class="nav-item w-100 border-0 bg-transparent text-start">
                     <i class="fa-solid fa-arrow-right-from-bracket nav-icon"></i> Logout
                 </button>
