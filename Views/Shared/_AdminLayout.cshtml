@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -75,7 +75,8 @@
         </nav>
 
         <div class="sidebar-bottom">
-            <form asp-area="Identity" asp-page="/Account/Logout" method="post">
+            <form asp-controller="Account" asp-action="Logout" method="post">
+                @Html.AntiForgeryToken()
                 <button type="submit" class="nav-item w-100 border-0 bg-transparent text-start">
                     <i class="fa-solid fa-arrow-right-from-bracket nav-icon"></i> Logout
                 </button>
@@ -182,8 +183,29 @@
         </div>
     </div> *@
 
+    <!-- SweetAlert2 & GlowCare Custom Alerts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/glowcare-alerts.js" asp-append-version="true"></script>
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/admin-profile.js"></script>
+    
+    @if (TempData["Success"] != null || TempData["SuccessMessage"] != null || TempData["Error"] != null || TempData["ErrorMessage"] != null)
+    {
+        <script>
+            // Scripts are at bottom of <body> — DOM is already ready, no DOMContentLoaded needed
+            (function() {
+                var successMsg = '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode((string)(TempData["Success"] ?? TempData["SuccessMessage"] ?? "")))';
+                var errorMsg = '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode((string)(TempData["Error"] ?? TempData["ErrorMessage"] ?? "")))';
+                if (successMsg) {
+                    GlowAlert.success('Success!', successMsg);
+                } else if (errorMsg) {
+                    GlowAlert.error('Oops...', errorMsg);
+                }
+            })();
+        </script>
+    }
+
     @await RenderSectionAsync("Scripts", required: false)
 
 </body>
