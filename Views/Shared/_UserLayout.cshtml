@@ -30,7 +30,6 @@
     <link href="~/css/UserLayout.css"
           rel="stylesheet"
           asp-append-version="true" />
-
     @RenderSection("Styles", required: false)
 </head>
 
@@ -66,14 +65,15 @@
                     <li class="nav-item">
                         <a class="nav-link"
                            asp-controller="User"
-                           asp-action="Products">
+                           asp-action="HomePage">
                             Home
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link"
-                           href="#">
+                           asp-controller="User"
+                           asp-action="Categories">
                             Categories
                         </a>
                     </li>
@@ -102,63 +102,72 @@
 
                 </form>
 
-                <!-- Right Icons -->
-                <div class="d-flex align-items-center gap-3 nav-icons">
-
-                    <!-- Wishlist -->
-                    <a asp-controller="User"
-                       asp-action="Wishlist"
-                       class="wishlist-nav position-relative">
-
-                        <i class="bi bi-heart fs-5"></i>
-
-                        <span id="wishlist-badge"
-                              class="wishlist-badge d-none">
-                            0
-                        </span>
+                <div class="d-flex gap-3 nav-icons align-items-center">
+                    <a asp-controller="User" asp-action="Wishlist">
+                        <span class="material-symbols-outlined cursor-pointer">favorite</span>
                     </a>
-
-                    <!-- Cart -->
-                    <a asp-controller="Cart"
-                       asp-action="Index"
-                       class="cart-link position-relative text-dark text-decoration-none">
-
-                        <span class="material-symbols-outlined">
-                            shopping_bag
-                        </span>
-
-                        <span class="cart-badge"
-                              style="display:none;">
-                            0
-                        </span>
+                    <a asp-controller="Cart" asp-action="Index" class="cart-link d-flex align-items-center">
+                        <span class="material-symbols-outlined cursor-pointer">shopping_bag</span>
+                        <span class="cart-badge" style="display: none;">0</span>
                     </a>
-
-                    <!-- Profile -->
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <a asp-controller="Account"
-                           asp-action="Profile"
-                           class="profile-icon text-dark text-decoration-none"
-                           title="My Profile">
-
-                            <span class="material-symbols-outlined">
-                                person
-                            </span>
+                    
+                    <!-- Profile Dropdown -->
+                    <div class="dropdown d-inline-block">
+                        <a href="#" class="text-decoration-none text-dark d-flex align-items-center" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="material-symbols-outlined cursor-pointer m-0">person</span>
                         </a>
-                    }
-                    else
-                    {
-                        <a asp-controller="Account"
-                           asp-action="Login"
-                           class="profile-icon text-dark text-decoration-none"
-                           title="Login / Sign Up">
-
-                            <span class="material-symbols-outlined">
-                                person
-                            </span>
-                        </a>
-                    }
-
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="profileDropdown" style="min-width: 215px; z-index: 1050;">
+                            @if (SignInManager.IsSignedIn(User))
+                            {
+                                var currentUser = await UserManager.GetUserAsync(User);
+                                var displayName = currentUser?.FullName ?? User.Identity?.Name?.Split('@')[0] ?? "User";
+                                
+                                <li class="px-3 py-2 border-bottom mb-2">
+                                    <span class="d-block fw-bold text-dark" style="font-size: 13px;">Hello, @displayName!</span>
+                                    <span class="d-block text-muted" style="font-size: 11px; cursor: default;">@User.Identity?.Name</span>
+                                </li>
+                                
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <li>
+                                        <a class="dropdown-item fw-medium" asp-controller="Admin" asp-action="Dashboard" style="color: #635f40;">
+                                            <span class="material-symbols-outlined">dashboard</span> Admin Panel
+                                        </a>
+                                    </li>
+                                }
+                                
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Account" asp-action="Profile">
+                                        <span class="material-symbols-outlined">person</span> My Profile
+                                    </a>
+                                </li>
+                                
+                                <li><hr class="dropdown-divider opacity-5 my-2"></li>
+                                
+                                <li class="px-2">
+                                    <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="dropdown-item text-danger rounded-3 w-100 border-0 bg-transparent text-start">
+                                            <span class="material-symbols-outlined">logout</span> Sign Out
+                                        </button>
+                                    </form>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Account" asp-action="Login">
+                                        <span class="material-symbols-outlined">login</span> Login
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Account" asp-action="Register">
+                                        <span class="material-symbols-outlined">person_add</span> Register
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
                 </div>
 
             </div>

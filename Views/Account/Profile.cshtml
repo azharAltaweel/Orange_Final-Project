@@ -32,17 +32,10 @@
                     <span class="material-symbols-outlined">person</span> Profile
                 </a>
 
-                <a href="#">
-                    <span class="material-symbols-outlined">shopping_cart</span> Orders
-                </a>
-
-                <a href="#">
+                <a asp-controller="User" asp-action="Wishlist">
                     <span class="material-symbols-outlined">favorite</span> Wishlist
                 </a>
-
-                <a href="#">
-                    <span class="material-symbols-outlined">location_on</span> Address
-                </a>
+    
                 
                 <hr class="my-2 opacity-5">
                 
@@ -124,7 +117,9 @@
                                         </td>
                                         <td class="text-end fw-bold">$@order.Total</td>
                                         <td class="text-end">
-                                            <a href="#" class="btn btn-sm btn-outline-secondary rounded-3">View Details</a>
+                                            <a asp-controller="User" asp-action="OrderDetails" asp-route-id="@order.Id" class="btn btn-sm btn-outline-secondary rounded-3">
+                                                View Details
+                                            </a>
                                         </td>
                                     </tr>
                                 }

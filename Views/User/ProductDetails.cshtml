@@ -474,28 +474,21 @@ as List<E_commerce_Website__Skincare_.Models.Product>;
                 <!-- ADD TO CART -->
                 @if (Model.StockQuantity > 0)
                 {
-                    <button class="btn add-cart-btn"
-                            onclick="addToCart(this)"
-                            data-product-id="@Model.Id"
-                            data-product-name="@Model.Name"
-                            data-product-price="@finalPrice"
-                            data-product-image="@mainImage">
-
-                        Add To Cart
-
-                    </button>
+                    <form asp-controller="User" asp-action="AddToCart" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <input type="hidden" name="quantity" value="1" />
+                        <button type="submit" class="btn add-cart-btn">
+                            Add To Cart
+                        </button>
+                    </form>
                 }
                 else
                 {
-                    <button class="btn add-cart-btn"
-                            disabled>
-
+                    <button class="btn add-cart-btn" disabled>
                         Out Of Stock
-
                     </button>
                 }
-
-
                 <!-- WISHLIST -->
                 <button class="wishlist-btn"
                         data-product-id="@Model.Id"

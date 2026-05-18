@@ -63,10 +63,8 @@ function loadWishlist() {
 
     <div class="wishlist-actions">
 
-        <button class="btn-cart">
-
+        <button type="submit" class="btn add-cart-btn">
             Add To Cart
-
         </button>
 
         <button class="btn-remove"

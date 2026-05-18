@@ -24,12 +24,46 @@
             </div>
         </div>
     </section>
+  
+    <!-- ══ RITUAL CATEGORIES ══ -->
+    <section class="gap-section category-section rounded-4 py-5">
+        <h2 class="section-heading text-center mb-5"> Categories</h2>
+        <div class="row g-4 justify-content-center">
+
+            @if (ViewBag.Categories != null)
+            {
+                foreach (var category in ViewBag.Categories)
+                {
+                    <div class="col-6 col-md-3 text-center">
+                        @* Update asp-route-id to match your filtering setup if you have one *@
+                        <a asp-controller="User"
+                           asp-action="Products"
+                           asp-route-categoryId="@category.Id"
+                           class="cat-btn">
+                          <div class="cat-circle-outer">
+                                <div class="cat-circle-inner">
+                                    @* Fallback to a placeholder if the category image is missing *@
+                                    <img src="@(category.ImageUrl ?? "https://via.placeholder.com/150")" alt="@category.Name">
+                                </div>
+                            </div>
+                            <span class="cat-name">@category.Name</span>
+                        </a>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-center text-muted">No categories found.</p>
+            }
+
+        </div>
+    </section>
 
     <!-- ══ CURATED ESSENTIALS ══ -->
     <section class="gap-section">
         <div class="d-flex justify-content-between align-items-end mb-4">
             <div>
-                <h2 class="section-heading mb-1">Curated Essentials</h2>
+                <h2 class="section-heading mb-1">Products</h2>
                 <p class="mb-0" style="font-size:.88rem; color:var(--muted);">Recommended for your daily ritual</p>
             </div>
         </div>
@@ -78,36 +112,6 @@
         </div>
     </section>
 
-    <!-- ══ RITUAL CATEGORIES ══ -->
-    <section class="gap-section category-section rounded-4 py-5">
-        <h2 class="section-heading text-center mb-5">Ritual Categories</h2>
-        <div class="row g-4 justify-content-center">
-
-            @if (ViewBag.Categories != null)
-            {
-                foreach (var category in ViewBag.Categories)
-                {
-                    <div class="col-6 col-md-3 text-center">
-                        @* Update asp-route-id to match your filtering setup if you have one *@
-                        <a asp-controller="Product" asp-action="Category" asp-route-id="@category.Id" class="cat-link">
-                            <div class="cat-circle-outer">
-                                <div class="cat-circle-inner">
-                                    @* Fallback to a placeholder if the category image is missing *@
-                                    <img src="@(category.ImageUrl ?? "https://via.placeholder.com/150")" alt="@category.Name">
-                                </div>
-                            </div>
-                            <span class="cat-name">@category.Name</span>
-                        </a>
-                    </div>
-                }
-            }
-            else
-            {
-                <p class="text-center text-muted">No categories found.</p>
-            }
-
-        </div>
-    </section>
 
 
     <!-- ══ DISCOUNT BANNER ══ -->
@@ -240,7 +244,7 @@
             {
                 <div class="py-3">
                     <p class="text-muted small mb-3">You must be logged in to share your experience.</p>
-                    <a asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Context.Request.Path" class="btn-primary-glow text-decoration-none d-inline-block px-4">
+                    <a asp-controller="Account" asp-action="Login" class="btn-primary-glow text-decoration-none d-inline-block px-4">
                         Login to Review
                     </a>
                 </div>

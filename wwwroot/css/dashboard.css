@@ -145,7 +145,7 @@ body {
 .topbar {
     background: var(--white);
     border-bottom: 1px solid var(--border);
-    height: 60px;
+    height: 73px;
     display: flex;
     align-items: center;
     padding: 0 28px;
@@ -833,3 +833,24 @@ tbody td {
     border-radius: 10px;
 }
 
+.modal-dialog {
+    margin: 1.75rem auto !important;
+}
+
+/* ?? FINAL MODAL FIX ?? */
+.modal {
+    background: transparent !important;
+    border-radius: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    transform: none !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+    margin-left: 0 !important;
+}
+
+.modal-dialog {
+    margin: 1.75rem auto !important;
+    max-width: 500px;
+}

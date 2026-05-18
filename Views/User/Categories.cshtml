@@ -1,117 +1,157 @@
 ﻿@model IEnumerable<E_commerce_Website__Skincare_.Models.Category>
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @{
-    var categories = Model?.ToArray() ?? new E_commerce_Website__Skincare_.Models.Category[0];
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    ViewData["Title"] = "Categories";
+    var categories = Model?.ToList() ?? new List<E_commerce_Website__Skincare_.Models.Category>();
 }
+ @* <link href="~/css/CategoryUser.css" rel="stylesheet" />  *@
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&amp;family=Jost:wght@300;400;500&amp;display=swap" rel="stylesheet">
-<link href="~/css/CategoryUser.css" rel="stylesheet">
+ <style>
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 24px;
+        padding: 20px;
+    }
 
+    .cat-card {
+        background-color: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .cat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+    .cat-img-wrap {
+        width: 100%;
+        height: 260px;
+        overflow: hidden;
+    }
+
+        .cat-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .cat-body {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        flex-grow: 1;
+    }
+
+    .cat-label {
+        font-size: 14px;
+        color: #8c8c8c;
+        font-weight: 500;
+    }
+
+    .cat-name {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin: 0;
+        text-transform: lowercase;
+    }
+
+    .cat-count {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin: 4px 0 14px 0;
+    }
+
+    .cat-btn {
+        display: block;
+        text-align: center;
+        background-color: #1e2229;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 14px 0;
+        border-radius: 25px;
+        font-size: 15px;
+        font-weight: 600;
+        transition: background-color 0.2s ease;
+        margin-top: auto;
+    }
+
+        .cat-btn:hover {
+            background-color: #313742;
+            color: #ffffff;
+        }
+
+    .empty-cats {
+        text-align: center;
+        padding: 50px 20px;
+        color: #8c8c8c;
+    }
+
+        .empty-cats i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+
+ </style>
 <main class="container py-5" style="max-width:1140px;">
 
     <!-- ── Hero ── -->
-    <section class="mb-5 pb-2">
-        <h1 class="section-title mb-3">Curated Rituals</h1>
-        <p class="section-sub">Discover our intentionally designed skincare categories, each crafted to nourish your skin and elevate your daily self-care journey.</p>
+    <section class="mb-5">
+        <h1 class="section-title mb-3">All Categories</h1>
     </section>
 
-    @for (int i = 0; i < categories.Length; i += 2)
+    <!-- ── Grid ── -->
+    @if (categories.Any())
     {
-        bool isEvenRowGroup = (i / 2) % 2 == 0;
+        <div class="categories-grid">
+            @foreach (var cat in categories)
+            {
+                <div class="cat-card">
 
-        if (isEvenRowGroup)
-        {
-            <!-- ── TYPE A ROW GROUP: Large (Left) + Small (Right) ── -->
-            <div class="row grid-gap mb-0" style="margin-bottom: 1.1rem !important;">
+                    <!-- Image -->
+                    <div class="cat-img-wrap">
+                        <img src="@(string.IsNullOrEmpty(cat.ImageUrl) ? "/images/categories/default-placeholder.png" : cat.ImageUrl)"
+                             alt="@cat.Name"
+                             loading="lazy" />
+                    </div>
 
-                <!-- First Category in pair (Large Card) -->
-                @{
-                    var catLeft = categories[i];
-                }
-                <div class="col-12 col-md-8 mb-0">
-                    <a asp-controller="Product" asp-action="Category" asp-route-id="@catLeft.Id" class="text-decoration-none text-dark">
-                        <div class="card-glow">
-                            <div class="img-wrap" style="position:relative;">
-                                <img src="@(string.IsNullOrEmpty(catLeft.ImageUrl) ? "https://placeholder.co/800x400" : catLeft.ImageUrl)" alt="@catLeft.Name">
-                                <div class="overlay"></div>
-                                <div class="card-caption">
-                                    <span class="label-caps text-white d-block mb-1" style="opacity:.85;">Collection</span>
-                                    <h2>@catLeft.Name</h2>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
+                    <!-- Body -->
+                    <div class="cat-body">
+                        <span class="cat-label">Collection</span>
+                        <h2 class="cat-name">@cat.Name</h2>
+                        @if (cat.Products != null)
+                        {
+                            <p class="cat-count">@cat.Products.Count products</p>
+                        }
 
-                <!-- Second Category in pair (Small Card) -->
-                @if (i + 1 < categories.Length)
-                {
-                    var catRight = categories[i + 1];
-                    <div class="col-12 col-md-4 mb-0">
-                        <a asp-controller="Product" asp-action="Category" asp-route-id="@catRight.Id" class="text-decoration-none text-dark">
-                            <div class="card-glow h-100">
-                                <div class="img-wrap">
-                                    <img src="@(string.IsNullOrEmpty(catRight.ImageUrl) ? "https://placeholder.co/400x400" : catRight.ImageUrl)" alt="@catRight.Name">
-                                </div>
-                                <div class="card-body-text">
-                                    <h2>@catRight.Name</h2>
-                                </div>
-                            </div>
+                        <a asp-controller="User"
+                           asp-action="Products"
+                           asp-route-categoryId="@cat.Id"
+                           class="cat-btn">
+                            View Category
                         </a>
                     </div>
-                }
-            </div>
-        }
-        else
-        {
-            <!-- ── TYPE B ROW GROUP: Small (Left) + Large Split (Right) ── -->
-            <div class="row grid-gap mb-0" style="margin-bottom: 1.1rem !important;">
 
-                <!-- First Category in pair (Small Card) -->
-                @{
-                    var catLeft = categories[i];
-                }
-                <div class="col-12 col-md-4">
-                    <a asp-controller="Product" asp-action="Category" asp-route-id="@catLeft.Id" class="text-decoration-none text-dark">
-                        <div class="card-glow">
-                            <div class="img-wrap" style="position:relative;">
-                                <img src="@(string.IsNullOrEmpty(catLeft.ImageUrl) ? "https://placeholder.co/400x400" : catLeft.ImageUrl)" alt="@catLeft.Name">
-                                <div class="overlay"></div>
-                                <div class="card-caption"><h2>@catLeft.Name</h2></div>
-                            </div>
-                        </div>
-                    </a>
                 </div>
-
-                <!-- Second Category in pair (Large Split Card) -->
-                @if (i + 1 < categories.Length)
-                {
-                    var catRight = categories[i + 1];
-                    <div class="col-12 col-md-8">
-                        <a asp-controller="Product" asp-action="Category" asp-route-id="@catRight.Id" class="text-decoration-none text-dark">
-                            <div class="card-glow">
-                                <div class="row g-0 h-100">
-                                    <div class="col-12 col-sm-5 split-text order-2 order-sm-1 d-flex flex-column justify-content-center">
-                                        <span class="label-caps">Daily Essentials</span>
-                                        <h2>@catRight.Name</h2>
-                                        <div class="line-anim mt-2"></div>
-                                    </div>
-                                    <div class="col-12 col-sm-7 order-1 order-sm-2">
-                                        <div class="img-wrap" style="height:100%; min-height:240px;">
-                                            <img src="@(string.IsNullOrEmpty(catRight.ImageUrl) ? "https://placeholder.co/800x400" : catRight.ImageUrl)" alt="@catRight.Name">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                }
-            </div>
-        }
+            }
+        </div>
     }
-</main>
+    else
+    {
+        <div class="empty-cats">
+            <i class="fa-regular fa-folder-open"></i>
+            <p>No categories available yet.</p>
+        </div>
+    }
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</main>

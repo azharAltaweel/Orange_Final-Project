@@ -23,27 +23,31 @@ namespace E_commerce_Website__Skincare_.Controllers
             ApplicationDbContext context)
         {
             _userManager = userManager;
-
             _context = context;
         }
 
 
+        // ──────────────────────────────────────────
         // USERS PAGE
+        // ──────────────────────────────────────────
+
         public async Task<IActionResult> UsersInfo()
         {
             var users = await _userManager.Users.ToListAsync();
-
             return View(users);
         }
 
+
+        // ──────────────────────────────────────────
         // PRODUCTS PAGE
+        // ──────────────────────────────────────────
 
         public async Task<IActionResult> ProductsInfo()
         {
             var products = await _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Images)
-                 .Include(p => p.Discount)
+                .Include(p => p.Discount)
                 .ToListAsync();
 
             ViewBag.Categories = await _context.Categories.ToListAsync();
@@ -52,67 +56,46 @@ namespace E_commerce_Website__Skincare_.Controllers
         }
 
         // ADD PRODUCT
-
+        // ✅ من saeed: مسار الصور /images/products/ (أنظف)
         [HttpPost]
-        public async Task<IActionResult> AddProduct(
-            Product product,
-            List<IFormFile> images)
+        public async Task<IActionResult> AddProduct(Product product, List<IFormFile> images)
         {
-            if (ModelState.IsValid)
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+
+            if (images != null && images.Count > 0)
             {
-                _context.Products.Add(product);
-
-                await _context.SaveChangesAsync();
-
-                // save images
-                if (images != null && images.Any())
+                foreach (var image in images)
                 {
-                    foreach (var image in images)
+                    var fileName = Guid.NewGuid().ToString()
+                                   + Path.GetExtension(image.FileName);
+
+                    var path = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot/images/products",
+                        fileName);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
                     {
-                        string fileName =
-                            Guid.NewGuid() +
-                            Path.GetExtension(image.FileName);
-
-                        string folder =
-                            Path.Combine(
-                            Directory.GetCurrentDirectory(),
-                            "wwwroot/uploads");
-
-                        Directory.CreateDirectory(folder);
-
-                        string filePath =
-                            Path.Combine(folder, fileName);
-
-                        using var stream =
-                            new FileStream(filePath,
-                            FileMode.Create);
-
                         await image.CopyToAsync(stream);
-
-                        _context.ProductImages.Add(
-                            new ProductImage
-                            {
-                                ProductId = product.Id,
-                                ImageUrl =
-                                "/uploads/" + fileName
-                            });
                     }
+
+                    _context.ProductImages.Add(new ProductImage
+                    {
+                        ImageUrl = "/images/products/" + fileName,
+                        ProductId = product.Id
+                    });
                 }
 
                 await _context.SaveChangesAsync();
-
-                return RedirectToAction(
-                    "ProductsInfo");
             }
 
-            ViewBag.Categories =
-                _context.Categories.ToList();
-
-            ViewBag.Discounts =
-                _context.Discounts.ToList();
-
-            return View();
+            TempData["Success"] = "Product '" + product.Name + "' has been added successfully!";
+            return RedirectToAction("ProductsInfo");
         }
+
+        // PRODUCT DETAILS
+        // ✅ من azhar: فيتشر كاملة مش موجودة بـ saeed
         public async Task<IActionResult> ProductDetails(int id)
         {
             var product = await _context.Products
@@ -124,12 +107,13 @@ namespace E_commerce_Website__Skincare_.Controllers
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
-            {
                 return NotFound();
-            }
 
             return View(product);
         }
+
+        // DELETE PRODUCT
+        // ✅ دمج: error handling من azhar + بساطة saeed + TempData للـ redirect
         [HttpPost]
         public async Task<IActionResult> DeleteProduct(int id)
         {
@@ -139,22 +123,16 @@ namespace E_commerce_Website__Skincare_.Controllers
 
             if (product == null)
             {
-                return Json(new
-                {
-                    success = false,
-                    message = "Product not found"
-                });
+                return Json(new { success = false, message = "Product not found" });
             }
 
             try
             {
-                // DELETE IMAGES FROM FOLDER
                 if (product.Images != null && product.Images.Any())
                 {
                     foreach (var image in product.Images)
                     {
-                        if (string.IsNullOrEmpty(image.ImageUrl))
-                            continue;
+                        if (string.IsNullOrEmpty(image.ImageUrl)) continue;
 
                         var filePath = Path.Combine(
                             Directory.GetCurrentDirectory(),
@@ -162,25 +140,17 @@ namespace E_commerce_Website__Skincare_.Controllers
                             image.ImageUrl.TrimStart('/', '\\'));
 
                         if (System.IO.File.Exists(filePath))
-                        {
                             System.IO.File.Delete(filePath);
-                        }
                     }
 
-                    // DELETE IMAGES FROM DATABASE
                     _context.ProductImages.RemoveRange(product.Images);
                 }
 
-                // DELETE PRODUCT
                 _context.Products.Remove(product);
-
                 await _context.SaveChangesAsync();
 
-                return Json(new
-                {
-                    success = true,
-                    message = "Product deleted successfully"
-                });
+                TempData["Success"] = "Product has been deleted successfully!";
+                return RedirectToAction("ProductsInfo");
             }
             catch (Exception ex)
             {
@@ -188,51 +158,79 @@ namespace E_commerce_Website__Skincare_.Controllers
                 {
                     success = false,
                     message = "Something went wrong while deleting product.",
-                    error = ex.Message // remove in production if needed
+                    error = ex.Message
                 });
             }
         }
+
+        // EDIT PRODUCT
+        // ✅ من saeed: النسخة الكاملة مع استبدال الصور القديمة بالجديدة
         [HttpPost]
-        public async Task<IActionResult> EditProduct(
-            Product updatedProduct,
-            List<IFormFile> images)
+        public async Task<IActionResult> EditProduct(Product updatedProduct, List<IFormFile> images)
         {
             var product = await _context.Products
                 .Include(p => p.Images)
-                .FirstOrDefaultAsync(
-                    p => p.Id == updatedProduct.Id);
+                .FirstOrDefaultAsync(p => p.Id == updatedProduct.Id);
 
             if (product == null)
                 return NotFound();
 
-            product.Name =
-                updatedProduct.Name;
+            product.Name = updatedProduct.Name;
+            product.Description = updatedProduct.Description;
+            product.Price = updatedProduct.Price;
+            product.StockQuantity = updatedProduct.StockQuantity;
+            product.CategoryId = updatedProduct.CategoryId;
+            product.DiscountId = updatedProduct.DiscountId;
 
-            product.Description =
-                updatedProduct.Description;
+            if (images != null && images.Count > 0)
+            {
+                // DELETE OLD IMAGES FROM WWWROOT
+                foreach (var oldImage in product.Images)
+                {
+                    var oldPath = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot",
+                        oldImage.ImageUrl.TrimStart('/'));
 
-            product.Price =
-                updatedProduct.Price;
+                    if (System.IO.File.Exists(oldPath))
+                        System.IO.File.Delete(oldPath);
+                }
 
-            product.StockQuantity =
-                updatedProduct.StockQuantity;
+                // DELETE OLD IMAGES FROM DATABASE
+                _context.ProductImages.RemoveRange(product.Images);
 
-            product.CategoryId =
-                updatedProduct.CategoryId;
+                // ADD NEW IMAGES
+                foreach (var image in images)
+                {
+                    var fileName = Guid.NewGuid().ToString()
+                                   + Path.GetExtension(image.FileName);
 
-            // مهم جداً
-            product.DiscountId =
-                updatedProduct.DiscountId;
+                    var path = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot/images/products",
+                        fileName);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await image.CopyToAsync(stream);
+                    }
+
+                    _context.ProductImages.Add(new ProductImage
+                    {
+                        ImageUrl = "/images/products/" + fileName,
+                        ProductId = product.Id
+                    });
+                }
+            }
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(
-                "ProductsInfo");
+            TempData["Success"] = "Product has been updated successfully!";
+            return RedirectToAction("ProductsInfo");
         }
 
-
-
-
+        // DELETE SINGLE PRODUCT IMAGE
+        // ✅ من azhar: فيتشر مش موجودة بـ saeed
         [HttpPost]
         public async Task<IActionResult> DeleteProductImage(int imageId)
         {
@@ -240,15 +238,7 @@ namespace E_commerce_Website__Skincare_.Controllers
                 .FirstOrDefaultAsync(i => i.Id == imageId);
 
             if (image == null)
-            {
-                return Json(new
-                {
-                    success = false,
-                    message = "Image not found"
-                });
-            }
-
-            // DELETE IMAGE FROM WWWROOT
+                return Json(new { success = false, message = "Image not found" });
 
             var filePath = Path.Combine(
                 Directory.GetCurrentDirectory(),
@@ -256,70 +246,47 @@ namespace E_commerce_Website__Skincare_.Controllers
                 image.ImageUrl.TrimStart('/'));
 
             if (System.IO.File.Exists(filePath))
-            {
                 System.IO.File.Delete(filePath);
-            }
-
-            // DELETE FROM DATABASE
 
             _context.ProductImages.Remove(image);
-
             await _context.SaveChangesAsync();
 
-            return Json(new
-            {
-                success = true,
-                message = "Image deleted successfully"
-            });
+            return Json(new { success = true, message = "Image deleted successfully" });
         }
 
-
-
+        // ADD MORE IMAGES TO EXISTING PRODUCT
+        // ✅ من azhar: فيتشر مش موجودة بـ saeed
         [HttpPost]
-        public async Task<IActionResult> AddMoreImages(
-    int productId,
-    List<IFormFile> images)
+        public async Task<IActionResult> AddMoreImages(int productId, List<IFormFile> images)
         {
             var product = await _context.Products
                 .FirstOrDefaultAsync(p => p.Id == productId);
 
             if (product == null)
-            {
                 return NotFound();
-            }
 
             if (images != null && images.Count > 0)
             {
                 foreach (var image in images)
                 {
-                    // UNIQUE NAME
-
                     var fileName = Guid.NewGuid().ToString()
                                    + Path.GetExtension(image.FileName);
-
-                    // PATH
 
                     var path = Path.Combine(
                         Directory.GetCurrentDirectory(),
                         "wwwroot/images/products",
                         fileName);
 
-                    // SAVE IMAGE
-
                     using (var stream = new FileStream(path, FileMode.Create))
                     {
                         await image.CopyToAsync(stream);
                     }
 
-                    // SAVE TO DATABASE
-
-                    ProductImage productImage = new ProductImage
+                    _context.ProductImages.Add(new ProductImage
                     {
                         ImageUrl = "/images/products/" + fileName,
                         ProductId = productId
-                    };
-
-                    _context.ProductImages.Add(productImage);
+                    });
                 }
 
                 await _context.SaveChangesAsync();
@@ -329,35 +296,10 @@ namespace E_commerce_Website__Skincare_.Controllers
         }
 
 
+        // ──────────────────────────────────────────
+        // ORDERS
+        // ──────────────────────────────────────────
 
-
-
-
-
-
-
-
-        //    TempData["Success"] = "Product has been updated successfully!";
-        //    return RedirectToAction("ProductsInfo");
-        //}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // Action to  fetch info orders from db to show in view 
         public async Task<IActionResult> OrdersInfo()
         {
             var orders = await _context.Orders
@@ -369,7 +311,6 @@ namespace E_commerce_Website__Skincare_.Controllers
             return View(orders);
         }
 
-        // Update statsus order (Processing / Completed / Cancelled)
         [HttpPost]
         public async Task<IActionResult> UpdateOrderStatus(int orderId, string status)
         {
@@ -379,10 +320,9 @@ namespace E_commerce_Website__Skincare_.Controllers
             order.Status = status;
             await _context.SaveChangesAsync();
 
-            return Json(new { success = true, message = "Done Update Status Order Succesed" });
+            return Json(new { success = true, message = "Order status updated successfully" });
         }
 
-        // Delete Orderer
         [HttpPost]
         public async Task<IActionResult> DeleteOrder(int orderId)
         {
@@ -395,10 +335,9 @@ namespace E_commerce_Website__Skincare_.Controllers
             _context.Orders.Remove(order);
             await _context.SaveChangesAsync();
 
-            return Json(new { success = true, message = "Done Delete Order Succesed" });
+            return Json(new { success = true, message = "Order deleted successfully" });
         }
 
-        // Order Details 
         public async Task<IActionResult> OrderDetails(int id)
         {
             var order = await _context.Orders
@@ -410,7 +349,11 @@ namespace E_commerce_Website__Skincare_.Controllers
             return PartialView("_OrderDetails", order);
         }
 
-        // Creat Recumendation => Testimonials
+
+        // ──────────────────────────────────────────
+        // TESTIMONIALS & REVIEWS
+        // ──────────────────────────────────────────
+
         public async Task<IActionResult> Testimonials()
         {
             var testimonials = await _context.Testimonials
@@ -428,7 +371,6 @@ namespace E_commerce_Website__Skincare_.Controllers
             return View(testimonials);
         }
 
-        // Accept recumendation 
         [HttpPost]
         public async Task<IActionResult> ApproveTestimonial(int id)
         {
@@ -440,7 +382,6 @@ namespace E_commerce_Website__Skincare_.Controllers
             return Json(new { success = true, approved = testimonials.IsApproved });
         }
 
-        // deleet recumendation
         [HttpPost]
         public async Task<IActionResult> DeleteTestimonial(int id)
         {
@@ -452,7 +393,6 @@ namespace E_commerce_Website__Skincare_.Controllers
             return Json(new { success = true });
         }
 
-        // Approve reviwe
         [HttpPost]
         public async Task<IActionResult> ApproveReview(int id)
         {
@@ -461,11 +401,9 @@ namespace E_commerce_Website__Skincare_.Controllers
 
             review.IsApproved = !review.IsApproved;
             await _context.SaveChangesAsync();
-
             return Json(new { success = true, approved = review.IsApproved });
         }
 
-        // Delete review
         [HttpPost]
         public async Task<IActionResult> DeleteReview(int id)
         {
@@ -474,20 +412,21 @@ namespace E_commerce_Website__Skincare_.Controllers
 
             _context.Reviews.Remove(review);
             await _context.SaveChangesAsync();
-
             return Json(new { success = true });
         }
 
-        //(POPUP) PROFILE
+
+        // ──────────────────────────────────────────
+        // PROFILE
+        // ──────────────────────────────────────────
+
         public async Task<IActionResult> Profile()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return NotFound();
-
             return PartialView("_Profile", user);
         }
 
-        // eedit info profile 
         [HttpPost]
         public async Task<IActionResult> UpdateProfile(string fullName, string email, string? newPassword)
         {
@@ -506,20 +445,22 @@ namespace E_commerce_Website__Skincare_.Controllers
                 await _userManager.ResetPasswordAsync(user, token, newPassword);
             }
 
-            return Json(new { success = true, messsage = "Profile updated successfully" });
+            return Json(new { success = true, message = "Profile updated successfully" });
         }
 
 
-        // GET: /Admin/Categories
+        // ──────────────────────────────────────────
+        // CATEGORIES
+        // ──────────────────────────────────────────
+
         public async Task<IActionResult> Categories()
         {
             var categories = await _context.Categories
-                                   .Include(c => c.Products)
-                                   .ToListAsync();
+                .Include(c => c.Products)
+                .ToListAsync();
             return View(categories);
         }
 
-        // POST: /Admin/AddCategory
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddCategory(Category category, IFormFile categoryImageFile)
@@ -527,13 +468,10 @@ namespace E_commerce_Website__Skincare_.Controllers
             if (categoryImageFile != null && categoryImageFile.Length > 0)
             {
                 var fileName = Guid.NewGuid().ToString() + Path.GetExtension(categoryImageFile.FileName);
-
                 var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "categories");
 
                 if (!Directory.Exists(uploadDir))
-                {
                     Directory.CreateDirectory(uploadDir);
-                }
 
                 var fullPath = Path.Combine(uploadDir, fileName);
 
@@ -556,9 +494,6 @@ namespace E_commerce_Website__Skincare_.Controllers
             return RedirectToAction("Categories");
         }
 
-        // POST: /Admin/EditCategory
-        [HttpPost]
-        // POST: /Admin/EditCategory
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditCategory(Category category, IFormFile? categoryImageFile)
@@ -578,21 +513,19 @@ namespace E_commerce_Website__Skincare_.Controllers
                 if (!string.IsNullOrEmpty(existingCategory.ImageUrl) &&
                     !existingCategory.ImageUrl.Contains("default-placeholder.png"))
                 {
-                    var oldFullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", existingCategory.ImageUrl.TrimStart('/'));
+                    var oldFullPath = Path.Combine(
+                        Directory.GetCurrentDirectory(), "wwwroot",
+                        existingCategory.ImageUrl.TrimStart('/'));
 
                     if (System.IO.File.Exists(oldFullPath))
-                    {
                         System.IO.File.Delete(oldFullPath);
-                    }
                 }
 
                 var fileName = Guid.NewGuid().ToString() + Path.GetExtension(categoryImageFile.FileName);
                 var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "categories");
 
                 if (!Directory.Exists(uploadDir))
-                {
                     Directory.CreateDirectory(uploadDir);
-                }
 
                 var newFullPath = Path.Combine(uploadDir, fileName);
 
@@ -603,30 +536,25 @@ namespace E_commerce_Website__Skincare_.Controllers
 
                 existingCategory.ImageUrl = "/images/categories/" + fileName;
             }
-            
+
             await _context.SaveChangesAsync();
 
             TempData["Success"] = "Category '" + category.Name + "' has been updated successfully!";
             return RedirectToAction("Categories");
         }
-        // POST: /Admin/DeleteCategory
+
         [HttpPost]
         public async Task<IActionResult> DeleteCategory(int id)
         {
             var category = await _context.Categories
-                .Include(c => c.Products) // Load the related products
+                .Include(c => c.Products)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (category == null)
-            {
                 return Json(new { success = false, message = "Error: Category not found" });
-            }
 
-            // Check if category is empty before allowing delete
             if (category.Products != null && category.Products.Any())
-            {
                 return Json(new { success = false, message = "Cannot delete: This category contains products." });
-            }
 
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
@@ -634,10 +562,13 @@ namespace E_commerce_Website__Skincare_.Controllers
             return Json(new { success = true, message = "Category deleted successfully" });
         }
 
-        //Get: /Dashboard 
+
+        // ──────────────────────────────────────────
+        // DASHBOARD
+        // ──────────────────────────────────────────
+
         public async Task<IActionResult> Dashboard()
         {
-            // Basic Stats
             ViewBag.TotalProducts = await _context.Products.CountAsync();
             ViewBag.TotalCategories = await _context.Categories.CountAsync();
             ViewBag.TotalOrders = await _context.Orders.CountAsync();
@@ -647,7 +578,6 @@ namespace E_commerce_Website__Skincare_.Controllers
                 .Select(i => DateTime.Today.AddDays(-i))
                 .OrderBy(d => d).ToList();
 
-            // Weekly Orders anonymous list
             var orders = await _context.Orders
                 .Where(o => o.OrderDate >= DateTime.Today.AddDays(-6))
                 .ToListAsync();
@@ -656,16 +586,6 @@ namespace E_commerce_Website__Skincare_.Controllers
                 DayLabel = day.ToString("ddd").Substring(0, 1),
                 Count = orders.Count(o => o.OrderDate.Date == day.Date)
             }).ToList();
-
-            //// Weekly Users anonymous list
-            //var users = await _context.Users
-            //    .Where(u => u.CreatedAt >= DateTime.Today.AddDays(-6))
-            //    .ToListAsync();
-
-            //ViewBag.WeeklyNewUsers = last7Days.Select(day => new {
-            //    DayLabel = day.ToString("ddd").Substring(0, 1),
-            //    Count = users.Count(u => u.CreatedAt.Date == day.Date)
-            //}).ToList();
 
             return View();
         }
