@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.37216.2
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-commerce Website (Skincare)", "E-commerce Website (Skincare).csproj", "{AC14D705-0527-40ED-8163-C02CF013B593}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jumla", "Jumla.csproj", "{AC14D705-0527-40ED-8163-C02CF013B593}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
