@@ -36,7 +36,8 @@ function approveTestimonial(id) {
 }
 
 function deleteTestimonial(id) {
-    GlowAlert.fire({
+    
+    JumlaAlert.fire({
         title: 'Delete Testimonial?',
         text: 'Are you sure you want to delete this testimonial? This action cannot be undone.',
         icon: 'warning',
@@ -104,7 +105,7 @@ function approveReview(id) {
 }
 
 function deleteReview(id) {
-    GlowAlert.fire({
+    JumlaAlert.fire({
         title: 'Delete Review?',
         text: 'Are you sure you want to delete this review? This action cannot be undone.',
         icon: 'warning',
@@ -195,5 +196,5 @@ function clearReviewFilters() {
 // ─── TOAST ───
 function showToast(message, type) {
     let icon = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
-    GlowAlert.toast(message, icon);
+    JumlaAlert.toast(message, icon);
 }

@@ -60,9 +60,9 @@ function saveProfile() {
 
 function showProfileAlert(message, type) {
     if (type === 'success') {
-        GlowAlert.toast(message, 'success');
+        JumlaAlert.toast(message, 'success');
     } else {
-        GlowAlert.error('Error', message);
+        JumlaAlert.error('Error', message);
     }
 }
 

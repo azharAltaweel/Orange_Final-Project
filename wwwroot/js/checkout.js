@@ -8,12 +8,12 @@ async function loadCheckoutSummary() {
         const response = await fetch('/Cart/GetCartItems');
         if (response.ok) {
             cart = await response.json();
-            localStorage.setItem('glowcare_cart', JSON.stringify(cart));
+            localStorage.setItem('jumla_cart', JSON.stringify(cart));
             if (typeof updateCartBadge === 'function') updateCartBadge();
         }
     } catch (error) {
         console.error('Error fetching dynamic checkout items from DB/Session:', error);
-        cart = JSON.parse(localStorage.getItem('glowcare_cart')) || [];
+        cart = JSON.parse(localStorage.getItem('jumla_cart')) || [];
     }
 
     const container = document.getElementById('checkout-items-list');
@@ -34,7 +34,7 @@ async function loadCheckoutSummary() {
                 </div>
                 <div class="flex-grow-1">
                     <h6 class="mb-0 text-truncate" style="max-width: 180px;">${item.name}</h6>
-                    <small class="text-muted">${item.category || 'Skincare'}</small>
+                    <small class="text-muted">${item.category || 'General'}</small>
                 </div>
                 <div class="text-end">
                     <span class="fw-medium">$${(item.price * item.quantity).toFixed(2)}</span>
@@ -48,7 +48,7 @@ async function loadCheckoutSummary() {
 }
 
 function updateTotal() {
-    const cart = JSON.parse(localStorage.getItem('glowcare_cart')) || [];
+    const cart = JSON.parse(localStorage.getItem('jumla_cart')) || [];
     let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     
     const shippingRadio = document.querySelector('input[name="shippingMethod"]:checked');
@@ -78,12 +78,12 @@ async function handleContinueToPayment() {
     }
 
     // Get input elements
-    const firstName = form.querySelector('input[placeholder="Elena"]').value.trim();
-    const lastName = form.querySelector('input[placeholder="Vance"]').value.trim();
-    const address = form.querySelector('input[placeholder="123 Street, Apt 4B"]').value.trim();
-    const city = form.querySelector('input[placeholder="New York"]').value.trim();
-    const postalCode = form.querySelector('input[placeholder="10001"]').value.trim();
-    const phone = form.querySelector('input[placeholder="+1 (555) 000-0000"]').value.trim();
+    const firstName = form.querySelector('input[name="firstName"]').value.trim();
+    const lastName = form.querySelector('input[name="lastName"]').value.trim();
+    const address = form.querySelector('input[name="address"]').value.trim();
+    const city = form.querySelector('input[name="city"]').value.trim();
+    const postalCode = form.querySelector('input[name="postalCode"]').value.trim();
+    const phone = form.querySelector('input[name="phone"]').value.trim();
     const shippingMethod = form.querySelector('input[name="shippingMethod"]:checked').value;
 
     const data = {
@@ -109,16 +109,16 @@ async function handleContinueToPayment() {
             window.location.href = '/Cart/Payment';
         } else {
             console.error('Failed to save checkout info');
-            if (typeof GlowAlert !== 'undefined') {
-                GlowAlert.error('Checkout Error', 'Failed to save checkout information.');
+            if (typeof JumlaAlert !== 'undefined') {
+                JumlaAlert.error('Checkout Error', 'Failed to save checkout information.');
             } else {
                 alert('Failed to save checkout information.');
             }
         }
     } catch (error) {
         console.error('Error saving checkout info:', error);
-        if (typeof GlowAlert !== 'undefined') {
-            GlowAlert.error('Connection Error', 'Could not connect to the server.');
+        if (typeof JumlaAlert !== 'undefined') {
+            JumlaAlert.error('Connection Error', 'Could not connect to the server.');
         } else {
             alert('Could not connect to the server.');
         }

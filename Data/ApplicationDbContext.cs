@@ -1,8 +1,8 @@
-﻿using E_commerce_Website__Skincare_.Models;
+﻿using Jumla .Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace E_commerce_Website__Skincare_.Data
+namespace Jumla.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {

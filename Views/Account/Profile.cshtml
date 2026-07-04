@@ -1,4 +1,4 @@
-@model E_commerce_Website__Skincare_.Models.ViewModels.ProfileViewModel
+@model Jumla.Models.ViewModels.ProfileViewModel
 
 @{
     ViewData["Title"] = "My Profile";
@@ -14,7 +14,7 @@
         <div class="col-md-3 sidebar mb-4">
             <div class="card-custom text-center mb-4">
                 <div class="profile-img-container">
-                    <img src="https://ui-avatars.com/api/?name=@(Model.FullName)&background=635f40&color=fff&size=100" class="rounded-circle profile-img" alt="Profile Avatar"/>
+                    <img src="https://ui-avatars.com/api/?name=@(Model.FullName)&background=006130&color=fff&size=100" class="rounded-circle profile-img" alt="Profile Avatar"/>
                 </div>
                 <h6 class="fw-bold mb-1">@Model.FullName</h6>
                 <p class="text-muted small mb-0">@Model.MemberSince</p>
@@ -23,7 +23,7 @@
             <div class="card-custom p-2">
                 @if (User.IsInRole("Admin"))
                 {
-                    <a asp-controller="Admin" asp-action="Dashboard" style="color: #635f40; font-weight: 600;">
+                    <a asp-controller="Admin" asp-action="Dashboard" style="color: #006130; font-weight: 600;">
                         <span class="material-symbols-outlined">dashboard</span> Admin Dashboard
                     </a>
                 }
@@ -60,8 +60,14 @@
                     <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
                     
                     <div class="col-md-6">
+                        <label class="form-label">Business Name</label>
+                        <input class="form-control" value="@Model.BusinessName" readonly style="background:#f8f9fa; cursor:not-allowed;">
+                        <span asp-validation-for="BusinessName" class="text-danger small"></span>
+
+                    </div>
+                    <div class="col-md-6">
                         <label asp-for="FullName" class="form-label">Full Name</label>
-                        <input asp-for="FullName" class="form-control" placeholder="Elena Vance">
+                        <input asp-for="FullName" class="form-control" placeholder="Abdalsameea Altaweel">
                         <span asp-validation-for="FullName" class="text-danger small"></span>
                     </div>
 
@@ -87,7 +93,7 @@
             <div class="card-custom">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="fw-bold mb-0">Order History</h4>
-                    <a href="#" class="btn btn-link text-decoration-none small" style="color: #635f40;">View All</a>
+                    <a href="#" class="btn btn-link text-decoration-none small" style="color: #006130;">View All</a>
                 </div>
 
                 <div class="table-responsive">
@@ -111,11 +117,9 @@
                                         <td class="fw-bold">@order.Id</td>
                                         <td>@order.Date.ToString("MMM dd, yyyy")</td>
                                         <td>
-                                            <span class="status-badge @(order.Status == "Shipped" ? "bg-success-subtle text-success" : "bg-warning-subtle text-warning")">
-                                                @order.Status
-                                            </span>
+                                            <span class="status-badge @(order.Status == "Completed" ? "bg-success-subtle text-success" : order.Status == "Cancelled" ? "bg-danger-subtle text-danger" : "bg-warning-subtle text-warning")">
                                         </td>
-                                        <td class="text-end fw-bold">$@order.Total</td>
+                                        <td class="text-end fw-bold">JOD @order.Total.ToString("0.00")</td>
                                         <td class="text-end">
                                             <a asp-controller="User" asp-action="OrderDetails" asp-route-id="@order.Id" class="btn btn-sm btn-outline-secondary rounded-3">
                                                 View Details

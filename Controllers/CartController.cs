@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using E_commerce_Website__Skincare_.Data;
-using E_commerce_Website__Skincare_.Models;
+using Jumla .Data;
+using Jumla.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Linq;
@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using System;
 
-namespace E_commerce_Website__Skincare_.Controllers
+namespace Jumla.Controllers
 {
     public class CartController : Controller
     {
@@ -66,7 +66,7 @@ namespace E_commerce_Website__Skincare_.Controllers
                             Name = item.Product.Name,
                             Price = (double)item.Product.Price,
                             Image = item.Product.Images?.FirstOrDefault()?.ImageUrl ?? "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=400",
-                            Size = "50ml",
+                            Size = item.Product.Unit ?? "",
                             Category = item.Product.Category?.Name ?? "Skincare",
                             Quantity = item.Quantity
                         });
@@ -285,175 +285,189 @@ namespace E_commerce_Website__Skincare_.Controllers
         [HttpPost]
         public async Task<IActionResult> PlaceOrder()
         {
-            // 1. Get current cart items
-            var cartItems = new List<SessionCartItem>();
-            string userId = null;
-
-            if (User.Identity != null && User.Identity.IsAuthenticated)
+            try
             {
-                userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var dbItems = await _context.CartItems
-                    .Where(c => c.UserId == userId)
-                    .ToListAsync();
+                // 1. Get current cart items
+                var cartItems = new List<SessionCartItem>();
+                string userId = null;
 
-                foreach (var dbItem in dbItems)
+                if (User.Identity != null && User.Identity.IsAuthenticated)
                 {
-                    cartItems.Add(new SessionCartItem
+                    userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var dbItems = await _context.CartItems
+                        .Where(c => c.UserId == userId)
+                        .ToListAsync();
+
+                    foreach (var dbItem in dbItems)
                     {
-                        ProductId = dbItem.ProductId,
-                        Quantity = dbItem.Quantity
-                    });
-                }
-            }
-            else
-            {
-                var sessionItems = HttpContext.Session.GetObjectFromJson<List<SessionCartItem>>("SessionCart");
-                if (sessionItems != null)
-                {
-                    cartItems = sessionItems;
-                }
-            }
-
-            // 2. Validate cart existence
-            if (!cartItems.Any())
-            {
-                return Json(new { success = false, message = "Your cart is empty. Please add items to your cart before checking out." });
-            }
-
-            // 3. Validate product existence and stock
-            foreach (var item in cartItems)
-            {
-                var product = await _context.Products.FindAsync(item.ProductId);
-                if (product == null)
-                {
-                    return Json(new { success = false, message = $"Product with ID {item.ProductId} no longer exists." });
-                }
-
-                if (product.StockQuantity < item.Quantity)
-                {
-                    return Json(new { success = false, message = $"Sorry, '{product.Name}' is out of stock or does not have enough stock available. Available stock: {product.StockQuantity}." });
-                }
-            }
-
-            // 4. Calculate pricing
-            decimal subtotal = 0;
-            foreach (var item in cartItems)
-            {
-                var product = await _context.Products.FindAsync(item.ProductId);
-                subtotal += product.Price * item.Quantity;
-            }
-
-            decimal tax = subtotal * 0.08m; // 8% Tax
-            decimal shipping = 0;
-
-            // Retrieve Shipping Method from CheckoutInfo
-            var checkoutInfo = HttpContext.Session.GetObjectFromJson<CheckoutInfoDto>("CheckoutInfo");
-            if (checkoutInfo != null && checkoutInfo.ShippingMethod == "15")
-            {
-                shipping = 15.00m; // Express shipping
-            }
-
-            decimal total = subtotal + tax + shipping;
-
-            // 5. Ensure valid database User ID (Foreign Key constraint helper)
-            if (string.IsNullOrEmpty(userId))
-            {
-                var guestUser = await _userManager.FindByEmailAsync("guest@glowcare.com");
-                if (guestUser == null)
-                {
-                    guestUser = new ApplicationUser
-                    {
-                        UserName = "guest@glowcare.com",
-                        Email = "guest@glowcare.com",
-                        FullName = "Guest Customer"
-                    };
-                    var createResult = await _userManager.CreateAsync(guestUser, "Guest@123");
-                    if (!createResult.Succeeded)
-                    {
-                        return Json(new { success = false, message = "Failed to initialize guest checkout session." });
+                        cartItems.Add(new SessionCartItem
+                        {
+                            ProductId = dbItem.ProductId,
+                            Quantity = dbItem.Quantity
+                        });
                     }
                 }
-                userId = guestUser.Id;
-            }
-
-            // 6. Create Order record
-            var order = new Order
-            {
-                UserId = userId,
-                OrderDate = DateTime.Now,
-                TotalAmount = total,
-                Status = "Processing"
-            };
-
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
-
-            // 7. Save OrderItems and update stock
-            foreach (var item in cartItems)
-            {
-                var product = await _context.Products.FindAsync(item.ProductId);
-                product.StockQuantity -= item.Quantity; // Deduct Stock
-
-                var orderItem = new OrderItem
+                else
                 {
-                    OrderId = order.Id,
-                    ProductId = item.ProductId,
-                    Quantity = item.Quantity,
-                    Price = product.Price
+                    var sessionItems = HttpContext.Session.GetObjectFromJson<List<SessionCartItem>>("SessionCart");
+                    if (sessionItems != null)
+                    {
+                        cartItems = sessionItems;
+                    }
+                }
+
+                // 2. Validate cart existence
+                if (!cartItems.Any())
+                {
+                    return Json(new { success = false, message = "Your cart is empty. Please add items to your cart before checking out." });
+                }
+
+                // 3. Validate product existence and stock
+                foreach (var item in cartItems)
+                {
+                    var product = await _context.Products.FindAsync(item.ProductId);
+                    if (product == null)
+                    {
+                        return Json(new { success = false, message = $"Product with ID {item.ProductId} no longer exists." });
+                    }
+
+                    if (product.StockQuantity < item.Quantity)
+                    {
+                        return Json(new { success = false, message = $"Sorry, '{product.Name}' is out of stock or does not have enough stock available. Available stock: {product.StockQuantity}." });
+                    }
+                }
+
+                // 4. Calculate pricing
+                decimal subtotal = 0;
+                foreach (var item in cartItems)
+                {
+                    var product = await _context.Products.FindAsync(item.ProductId);
+                    subtotal += product.Price * item.Quantity;
+                }
+
+                decimal tax = subtotal * 0.08m; // 8% Tax
+                decimal shipping = 0;
+
+                // Retrieve Shipping Method from CheckoutInfo
+                var checkoutInfo = HttpContext.Session.GetObjectFromJson<CheckoutInfoDto>("CheckoutInfo");
+                if (checkoutInfo != null && checkoutInfo.ShippingMethod == "15")
+                {
+                    shipping = 15.00m; // Express shipping
+                }
+
+                decimal total = subtotal + tax + shipping;
+
+                // 5. Ensure valid database User ID (Foreign Key constraint helper)
+                if (string.IsNullOrEmpty(userId))
+                {
+                    var guestUser = await _userManager.FindByEmailAsync("guest@jumla.com");
+                    if (guestUser == null)
+                    {
+                        guestUser = new ApplicationUser
+                        {
+                            UserName = "guest@jumla.com",
+                            Email = "guest@jumla.com",
+                            FullName = "Guest Customer"
+                        };
+                        var createResult = await _userManager.CreateAsync(guestUser, "Guest@123");
+                        if (!createResult.Succeeded)
+                        {
+                            return Json(new { success = false, message = "Failed to initialize guest checkout session." });
+                        }
+                    }
+                    userId = guestUser.Id;
+                }
+
+                // 6. Create Order record
+                var order = new Order
+                {
+                    UserId = userId,
+                    OrderDate = DateTime.Now,
+                    TotalAmount = total,
+                    Status = OrderStatus.Processing,
+                    DeliveryAddress = checkoutInfo?.Address ?? "Not specified",
+                    Notes = ""
+
                 };
 
-                _context.OrderItems.Add(orderItem);
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
+
+                // 7. Save OrderItems and update stock
+                foreach (var item in cartItems)
+                {
+                    var product = await _context.Products.FindAsync(item.ProductId);
+                    product.StockQuantity -= item.Quantity; // Deduct Stock
+
+                    var orderItem = new OrderItem
+                    {
+                        OrderId = order.Id,
+                        ProductId = item.ProductId,
+                        Quantity = item.Quantity,
+                        Price = product.Price
+                    };
+
+                    _context.OrderItems.Add(orderItem);
+                }
+                await _context.SaveChangesAsync();
+
+                // 8. Integrate Simulated Payment Gateway (Stripe simulation)
+                string transactionId = "ch_stripe_" + Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16);
+                bool isPaymentSuccessful = true; // In a simulation, we default to success
+
+                var payment = new Payment
+                {
+                    OrderId = order.Id,
+                    PaymentMethod = "Stripe / Card",
+                    TransactionId = transactionId,
+                    IsPaid = isPaymentSuccessful
+                };
+
+                _context.Payments.Add(payment);
+
+                if (isPaymentSuccessful)
+                {
+                    order.Status = OrderStatus.Completed;
+                }
+                else
+                {
+                    order.Status = OrderStatus.Cancelled;
+                }
+
+                await _context.SaveChangesAsync();
+
+                // 9. Clear the cart
+                if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    var dbItems = await _context.CartItems.Where(c => c.UserId == userId).ToListAsync();
+                    _context.CartItems.RemoveRange(dbItems);
+                }
+                else
+                {
+                    HttpContext.Session.Remove("SessionCart");
+                }
+                HttpContext.Session.Remove("CheckoutInfo");
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, orderId = order.Id, transactionId = transactionId });
             }
-            await _context.SaveChangesAsync();
-
-            // 8. Integrate Simulated Payment Gateway (Stripe simulation)
-            string transactionId = "ch_stripe_" + Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16);
-            bool isPaymentSuccessful = true; // In a simulation, we default to success
-
-            var payment = new Payment
+            catch (Exception ex)
             {
-                OrderId = order.Id,
-                PaymentMethod = "Stripe / Card",
-                TransactionId = transactionId,
-                IsPaid = isPaymentSuccessful
-            };
-
-            _context.Payments.Add(payment);
-
-            if (isPaymentSuccessful)
-            {
-                order.Status = "Completed";
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message + " | " + ex.InnerException?.Message
+                });
             }
-            else
-            {
-                order.Status = "Cancelled";
-            }
-
-            await _context.SaveChangesAsync();
-
-            // 9. Clear the cart
-            if (User.Identity != null && User.Identity.IsAuthenticated)
-            {
-                var dbItems = await _context.CartItems.Where(c => c.UserId == userId).ToListAsync();
-                _context.CartItems.RemoveRange(dbItems);
-            }
-            else
-            {
-                HttpContext.Session.Remove("SessionCart");
-            }
-            HttpContext.Session.Remove("CheckoutInfo");
-            await _context.SaveChangesAsync();
-
-            return Json(new { success = true, orderId = order.Id, transactionId = transactionId });
         }
 
-        // Retain for legacy frontend compatibility (but returns empty list to obey "no default products" rule)
-        [HttpGet]
-        public IActionResult GetDefaultCartItems()
-        {
-            return Json(new List<object>());
+            // Retain for legacy frontend compatibility (but returns empty list to obey "no default products" rule)
+            [HttpGet]
+            public IActionResult GetDefaultCartItems()
+            {
+                return Json(new List<object>());
+            }
         }
-    }
 
     public class CartItemDto
     {

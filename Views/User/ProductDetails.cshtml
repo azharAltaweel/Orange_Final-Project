@@ -1,4 +1,4 @@
-﻿@model E_commerce_Website__Skincare_.Models.Product
+﻿@model Jumla.Models.Product
 
 @{
     Layout = "~/Views/Shared/_UserLayout.cshtml";
@@ -30,7 +30,7 @@
 
     var relatedProducts =
 ViewData["RelatedProducts"]
-as List<E_commerce_Website__Skincare_.Models.Product>;
+as List<Jumla.Models.Product>;
 }
 
 <link rel="stylesheet"
@@ -222,10 +222,9 @@ as List<E_commerce_Website__Skincare_.Models.Product>;
 
                         </span>
 
-                        <span class="new-price">
-
-                            $@finalPrice.ToString("0.00")
-
+                        <span class="new-price">JOD @Model.WholesalePrice.ToString("0.00")</span>
+                        <span style="font-size:.85rem;color:#888;margin-left:.5rem;">
+                            Retail: JOD @Model.Price.ToString("0.00")
                         </span>
 
                     </div>
@@ -238,8 +237,22 @@ as List<E_commerce_Website__Skincare_.Models.Product>;
 
                     </span>
                 }
-
             </div>
+
+
+            <!-- MinOrderQuantity  & wholesale price -->
+
+            <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                <span class="stock-in" style="background:#dff4e5;color:#2d8a4d;">
+                    <span class="material-symbols-outlined" style="font-size:1rem;vertical-align:middle;">payments</span>
+                    Wholesale: JOD @Model.WholesalePrice.ToString("0.00")
+                </span>
+                <span class="stock-in" style="background:#e8f0fe;color:#1a56db;">
+                    <span class="material-symbols-outlined" style="font-size:1rem;vertical-align:middle;">inventory_2</span>
+                    Min. Order: @Model.MinOrderQuantity @Model.Unit
+                </span>
+            </div>
+
 
 
             <!-- DESCRIPTION -->

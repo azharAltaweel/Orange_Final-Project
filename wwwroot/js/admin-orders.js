@@ -50,7 +50,7 @@ function updateStatus(orderId, status) {
 
 // Delete order
 function deleteOrder(orderId) {
-    GlowAlert.fire({
+    JumlaAlert.fire({
         title: 'Delete Order?',
         text: `Are you sure you want to delete Order #${orderId}? This action cannot be undone.`,
         icon: 'warning',
@@ -132,5 +132,5 @@ function clearFilters() {
 // ─── TOAST ───
 function showToast(message, type) {
     let icon = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
-    GlowAlert.toast(message, icon);
+    JumlaAlert.toast(message, icon);
 }

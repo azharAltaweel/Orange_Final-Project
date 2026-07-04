@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function loadPaymentSummary() {
-    const cart = JSON.parse(localStorage.getItem('glowcare_cart')) || [];
+    const cart = JSON.parse(localStorage.getItem('jumla_cart')) || [];
     if (cart.length === 0) {
         window.location.href = '/Cart';
         return;
@@ -46,23 +46,23 @@ async function handleCompleteOrder() {
         if (response.ok) {
             const result = await response.json();
             if (result.success) {
-                if (typeof GlowAlert !== 'undefined') {
-                    GlowAlert.success('Order Placed!', `Payment successful! Your order #${result.orderId} has been placed.<br><small class="text-muted">Transaction ID: ${result.transactionId}</small>`).then(() => {
-                        localStorage.removeItem('glowcare_cart');
+                if (typeof JumlaAlert!== 'undefined') {
+                    JumlaAlert.success('Order Placed!', `Payment successful! Your order #${result.orderId} has been placed.<br><small class="text-muted">Transaction ID: ${result.transactionId}</small>`).then(() => {
+                        localStorage.removeItem('jumla_cart');
                         if (typeof updateCartBadge === 'function') updateCartBadge();
                         window.location.href = '/'; // Go home
                     });
                 } else {
                     alert(`Payment successful! Your order #${result.orderId} has been placed. Transaction ID: ${result.transactionId}`);
-                    localStorage.removeItem('glowcare_cart');
+                    localStorage.removeItem('jumla_cart');
                     if (typeof updateCartBadge === 'function') updateCartBadge();
                     window.location.href = '/'; // Go home
                 }
             } else {
                 btn.disabled = false;
                 btn.innerHTML = 'Complete Order <span class="material-symbols-outlined align-middle ms-2">check_circle</span>';
-                if (typeof GlowAlert !== 'undefined') {
-                    GlowAlert.error('Order Failed', result.message || 'An error occurred while placing the order.');
+                if (typeof JumlaAlert !== 'undefined') {
+                    JumlaAlert.error('Order Failed', result.message || 'An error occurred while placing the order.');
                 } else {
                     alert(result.message || 'An error occurred.');
                 }
@@ -70,8 +70,8 @@ async function handleCompleteOrder() {
         } else {
             btn.disabled = false;
             btn.innerHTML = 'Complete Order <span class="material-symbols-outlined align-middle ms-2">check_circle</span>';
-            if (typeof GlowAlert !== 'undefined') {
-                GlowAlert.error('Order Failed', 'Failed to place the order due to a server error.');
+            if (typeof JumlaAlert !== 'undefined') {
+                JumlaAlert.error('Order Failed', 'Failed to place the order due to a server error.');
             } else {
                 alert('Failed to place the order due to a server error.');
             }
@@ -80,8 +80,8 @@ async function handleCompleteOrder() {
         btn.disabled = false;
         btn.innerHTML = 'Complete Order <span class="material-symbols-outlined align-middle ms-2">check_circle</span>';
         console.error('Error placing order:', error);
-        if (typeof GlowAlert !== 'undefined') {
-            GlowAlert.error('Connection Error', 'Could not connect to the server.');
+        if (typeof JumlaAlert !== 'undefined') {
+            JumlaAlert.error('Connection Error', 'Could not connect to the server.');
         } else {
             alert('Could not connect to the server.');
         }

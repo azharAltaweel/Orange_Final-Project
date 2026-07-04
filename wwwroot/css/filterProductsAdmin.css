@@ -144,7 +144,7 @@ body {
 }
 
     .thumbnail-image:hover {
-        border-color: #d7c3a5;
+        border-color: var(--olive);
         transform: scale(1.05);
     }
 
@@ -159,8 +159,8 @@ body {
 }
 
 .category-badge {
-    background: #f5ede3;
-    color: #9b6b43;
+    background: var(--surface-soft);
+    color: var(--secondary);
     padding: 8px 16px;
     border-radius: 30px;
     font-size: 13px;
@@ -174,8 +174,8 @@ body {
 }
 
 .discount-badge {
-    background: #dff4e5;
-    color: #2d8a4d;
+    background: #d8f4df;
+    color: var(--olive);
     padding: 10px 16px;
     border-radius: 14px;
     font-size: 14px;

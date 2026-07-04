@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace E_commerce_Website__Skincare_.Models.ViewModels
+namespace Jumla.Models.ViewModels
 {
     public class LoginViewModel
     {

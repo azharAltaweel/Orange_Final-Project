@@ -3,7 +3,7 @@
 ========================= */
 
 body {
-    background: #faf8f6;
+    background: var(--background);
 }
 
 /* =========================

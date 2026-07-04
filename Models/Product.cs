@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace E_commerce_Website__Skincare_.Models
+namespace Jumla.Models
 {
     public class Product
     {
@@ -18,6 +18,12 @@ namespace E_commerce_Website__Skincare_.Models
         [Range(0, int.MaxValue)]
         public int StockQuantity { get; set; }
         [Required]
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal WholesalePrice { get; set; }
+
+        public bool IsActive { get; set; } = true;
+        public int MinOrderQuantity { get; set; }
+        public string Unit { get; set; } // "كرتون", "كيلو", "قطعة"
         public int CategoryId { get; set; }
         public Category Category { get; set; }
 

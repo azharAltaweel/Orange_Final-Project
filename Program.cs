@@ -1,5 +1,5 @@
-//using E_commerce_Website__Skincare_.Data;
-//using E_commerce_Website__Skincare_.Models;
+//using.Data;
+//using Jumla.Models;
 //using Microsoft.AspNetCore.Identity;
 //using Microsoft.EntityFrameworkCore;
 
@@ -95,8 +95,8 @@
 
 
 
-using E_commerce_Website__Skincare_.Data;
-using E_commerce_Website__Skincare_.Models;
+using Jumla.Data;
+using Jumla.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

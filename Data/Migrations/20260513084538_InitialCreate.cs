@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace E_commerce_Website__Skincare_.Migrations
+namespace Jumla.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

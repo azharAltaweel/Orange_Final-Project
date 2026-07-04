@@ -1,12 +1,14 @@
-﻿using E_commerce_Website__Skincare_.Data;
-using E_commerce_Website__Skincare_.Models;
+﻿using Jumla
+
+    .Data;
+using Jumla.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
-namespace E_commerce_Website__Skincare_.Controllers
+namespace Jumla.Controllers
 {
     public class UserController : Controller
     {
@@ -31,7 +33,7 @@ namespace E_commerce_Website__Skincare_.Controllers
             var products = await _context.Products
                 .Include(p => p.Images)
                 .Include(p => p.Category)
-                .Take(4)
+                .Take(8)
                 .ToListAsync();
 
             ViewBag.Categories = await _context.Categories.ToListAsync();
@@ -286,8 +288,7 @@ namespace E_commerce_Website__Skincare_.Controllers
             _context.Testimonials.Add(testimonial);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Thank you! Your feedback has been sent to our administrator for approval.";
-            return RedirectToAction("HomePage");
+            TempData["Success"] = "Thank you! Your testimonial has been submitted and is pending admin approval."; return RedirectToAction("HomePage");
         }
 
 

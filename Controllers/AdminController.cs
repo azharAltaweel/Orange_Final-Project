@@ -1,5 +1,5 @@
-﻿using E_commerce_Website__Skincare_.Data;
-using E_commerce_Website__Skincare_.Models;
+﻿using Jumla .Data;
+using Jumla.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 
-namespace E_commerce_Website__Skincare_.Controllers
+namespace Jumla.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
 
     public class AdminController : Controller
     {
@@ -26,10 +26,8 @@ namespace E_commerce_Website__Skincare_.Controllers
             _context = context;
         }
 
-
         // ──────────────────────────────────────────
         // USERS PAGE
-        // ──────────────────────────────────────────
 
         public async Task<IActionResult> UsersInfo()
         {
@@ -38,9 +36,10 @@ namespace E_commerce_Website__Skincare_.Controllers
         }
 
 
+
+
         // ──────────────────────────────────────────
         // PRODUCTS PAGE
-        // ──────────────────────────────────────────
 
         public async Task<IActionResult> ProductsInfo()
         {
@@ -56,7 +55,6 @@ namespace E_commerce_Website__Skincare_.Controllers
         }
 
         // ADD PRODUCT
-        // ✅ من saeed: مسار الصور /images/products/ (أنظف)
         [HttpPost]
         public async Task<IActionResult> AddProduct(Product product, List<IFormFile> images)
         {
@@ -94,26 +92,7 @@ namespace E_commerce_Website__Skincare_.Controllers
             return RedirectToAction("ProductsInfo");
         }
 
-        // PRODUCT DETAILS
-        // ✅ من azhar: فيتشر كاملة مش موجودة بـ saeed
-        public async Task<IActionResult> ProductDetails(int id)
-        {
-            var product = await _context.Products
-                .Include(p => p.Images)
-                .Include(p => p.Category)
-                .Include(p => p.Discount)
-                .Include(p => p.Reviews)
-                    .ThenInclude(r => r.User)
-                .FirstOrDefaultAsync(p => p.Id == id);
-
-            if (product == null)
-                return NotFound();
-
-            return View(product);
-        }
-
         // DELETE PRODUCT
-        // ✅ دمج: error handling من azhar + بساطة saeed + TempData للـ redirect
         [HttpPost]
         public async Task<IActionResult> DeleteProduct(int id)
         {
@@ -164,7 +143,6 @@ namespace E_commerce_Website__Skincare_.Controllers
         }
 
         // EDIT PRODUCT
-        // ✅ من saeed: النسخة الكاملة مع استبدال الصور القديمة بالجديدة
         [HttpPost]
         public async Task<IActionResult> EditProduct(Product updatedProduct, List<IFormFile> images)
         {
@@ -181,6 +159,11 @@ namespace E_commerce_Website__Skincare_.Controllers
             product.StockQuantity = updatedProduct.StockQuantity;
             product.CategoryId = updatedProduct.CategoryId;
             product.DiscountId = updatedProduct.DiscountId;
+
+            product.WholesalePrice = updatedProduct.WholesalePrice;
+            product.MinOrderQuantity = updatedProduct.MinOrderQuantity;
+            product.Unit = updatedProduct.Unit;
+            product.IsActive = updatedProduct.IsActive;
 
             if (images != null && images.Count > 0)
             {
@@ -255,7 +238,6 @@ namespace E_commerce_Website__Skincare_.Controllers
         }
 
         // ADD MORE IMAGES TO EXISTING PRODUCT
-        // ✅ من azhar: فيتشر مش موجودة بـ saeed
         [HttpPost]
         public async Task<IActionResult> AddMoreImages(int productId, List<IFormFile> images)
         {
@@ -295,10 +277,28 @@ namespace E_commerce_Website__Skincare_.Controllers
             return RedirectToAction("ProductDetails", new { id = productId });
         }
 
+        // PRODUCT DETAILS
+        public async Task<IActionResult> ProductDetails(int id)
+        {
+            var product = await _context.Products
+                .Include(p => p.Images)
+                .Include(p => p.Category)
+                .Include(p => p.Discount)
+                .Include(p => p.Reviews)
+                    .ThenInclude(r => r.User)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (product == null)
+                return NotFound();
+
+            return View(product);
+        }
+
+
+
 
         // ──────────────────────────────────────────
-        // ORDERS
-        // ──────────────────────────────────────────
+        // ORDERS Page
 
         public async Task<IActionResult> OrdersInfo()
         {
@@ -317,10 +317,14 @@ namespace E_commerce_Website__Skincare_.Controllers
             var order = await _context.Orders.FindAsync(orderId);
             if (order == null) return NotFound();
 
-            order.Status = status;
-            await _context.SaveChangesAsync();
+            if (Enum.TryParse<OrderStatus>(status, out var parsedStatus))
+            {
+                order.Status = parsedStatus;
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Order status updated successfully" });
+            }
 
-            return Json(new { success = true, message = "Order status updated successfully" });
+            return Json(new { success = false, message = "Invalid status value" });
         }
 
         [HttpPost]
@@ -350,9 +354,9 @@ namespace E_commerce_Website__Skincare_.Controllers
         }
 
 
+
         // ──────────────────────────────────────────
         // TESTIMONIALS & REVIEWS
-        // ──────────────────────────────────────────
 
         public async Task<IActionResult> Testimonials()
         {
@@ -416,9 +420,10 @@ namespace E_commerce_Website__Skincare_.Controllers
         }
 
 
+
+
         // ──────────────────────────────────────────
         // PROFILE
-        // ──────────────────────────────────────────
 
         public async Task<IActionResult> Profile()
         {
@@ -449,10 +454,10 @@ namespace E_commerce_Website__Skincare_.Controllers
         }
 
 
+
+
         // ──────────────────────────────────────────
         // CATEGORIES
-        // ──────────────────────────────────────────
-
         public async Task<IActionResult> Categories()
         {
             var categories = await _context.Categories
@@ -565,8 +570,6 @@ namespace E_commerce_Website__Skincare_.Controllers
 
         // ──────────────────────────────────────────
         // DASHBOARD
-        // ──────────────────────────────────────────
-
         public async Task<IActionResult> Dashboard()
         {
             ViewBag.TotalProducts = await _context.Products.CountAsync();

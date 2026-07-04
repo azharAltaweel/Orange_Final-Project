@@ -1,17 +1,17 @@
 /**
- * GlowCare Rituals - Premium SweetAlert2 Global Integration
+ * Jumla Rituals - Premium SweetAlert2 Global Integration
  */
 
 // Initialize SweetAlert2 brand config globally
-window.GlowAlert = {
+window.JumlaAlert = {
     fire: function(options) {
         let defaults = {
             customClass: {
-                popup: 'glowcare-swal-popup',
-                title: 'glowcare-swal-title',
-                htmlContainer: 'glowcare-swal-html',
-                confirmButton: 'swal2-confirm glowcare-swal-confirm',
-                cancelButton: 'swal2-cancel glowcare-swal-cancel'
+                popup: 'jumla-swal-popup',
+                title: 'jumla-swal-title',
+                htmlContainer: 'jumla-swal-html',
+                confirmButton: 'swal2-confirm jumla-swal-confirm',
+                cancelButton: 'swal2-cancel jumla-swal-cancel'
             },
             buttonsStyling: false
         };
@@ -49,7 +49,7 @@ window.GlowAlert = {
             icon: icon,
             title: message,
             customClass: {
-                popup: 'glowcare-swal-toast'
+                popup: 'jumla-swal-toast'
             }
         });
     }
@@ -74,14 +74,14 @@ document.addEventListener('DOMContentLoaded', () => {
             let actionText = target.getAttribute('data-confirm-action') || 'Yes, proceed';
             let isDelete = message.toLowerCase().includes('delete') || actionText.toLowerCase().includes('delete') || target.classList.contains('btn-danger');
 
-            GlowAlert.fire({
+            JumlaAlert.fire({
                 title: title,
                 text: message,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: actionText,
                 cancelButtonText: 'Cancel',
-                confirmButtonColor: isDelete ? '#dc3545' : '#635f40'
+                confirmButtonColor: isDelete ? '#dc3545' : '#006130'
             }).then((result) => {
                 if (result.isConfirmed) {
                     target.dataset.glowConfirmed = 'true';
@@ -128,14 +128,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let isDelete = confirmMessage.toLowerCase().includes('delete') || form.action.toLowerCase().includes('delete');
 
-            GlowAlert.fire({
+            JumlaAlert.fire({
                 title: isDelete ? 'Delete Item?' : 'Confirm Action',
                 text: confirmMessage,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: isDelete ? 'Yes, Delete' : 'Confirm',
                 cancelButtonText: 'Cancel',
-                confirmButtonColor: isDelete ? '#dc3545' : '#635f40'
+                confirmButtonColor: isDelete ? '#dc3545' : '#006130'
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.dataset.glowConfirmed = 'true';

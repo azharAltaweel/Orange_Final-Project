@@ -1,4 +1,6 @@
-﻿namespace E_commerce_Website__Skincare_.Models
+﻿namespace Jumla
+
+    .Models
 {
     public class RegisterVM
     {

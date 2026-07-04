@@ -8,14 +8,14 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using E_commerce_Website__Skincare_.Models;
+using Jumla.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace E_commerce_Website__Skincare_.Areas.Identity.Pages.Account
+namespace Jumla.Areas.Identity.Pages.Account
 {
     public class ForgotPasswordModel : PageModel
     {

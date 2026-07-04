@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 
-namespace E_commerce_Website__Skincare_.Models
+namespace Jumla
+    .Models
 {
     public static class SessionExtensions
     {

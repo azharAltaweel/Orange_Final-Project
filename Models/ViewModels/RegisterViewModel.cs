@@ -1,9 +1,16 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace E_commerce_Website__Skincare_.Models.ViewModels
+namespace Jumla
+
+    .Models.ViewModels
 {
     public class RegisterViewModel
     {
+     
+        [Required(ErrorMessage = " Business Name is required")]
+        [Display(Name = "Business Name")]
+        public string BusinessName { get; set; }
+
         [Required(ErrorMessage = "Full Name is required")]
         [Display(Name = "Full Name")]
         public string FullName { get; set; }

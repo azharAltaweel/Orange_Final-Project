@@ -7,7 +7,7 @@ body {
 
 .brand {
     font-family: 'Playfair Display', serif;
-    color: #635f40;
+    color: #006130;
     font-size: 28px;
     font-weight: 600;
 }
@@ -26,12 +26,12 @@ body {
 
 .sidebar a:hover {
     background: rgba(99, 95, 64, 0.05);
-    color: #635f40;
+    color: #006130;
 }
 
 .active-link {
     background: #eae3bc !important;
-    color: #635f40 !important;
+    color: #006130 !important;
     font-weight: 600;
 }
 
@@ -81,7 +81,7 @@ body {
 }
 
 .form-control:focus {
-    border-color: #635f40;
+    border-color: #006130;
     box-shadow: 0 0 0 3px rgba(99, 95, 64, 0.1);
     background: #fff;
 }

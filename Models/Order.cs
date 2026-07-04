@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace E_commerce_Website__Skincare_.Models
+namespace Jumla
+    .Models
 {
     public enum OrderStatus
     {
@@ -19,8 +20,11 @@ namespace E_commerce_Website__Skincare_.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmount { get; set; }
 
-        public string Status { get; set; } // Processing, Completed, Cancelled
+        public OrderStatus Status { get; set; } = OrderStatus.Processing;
 
+        public bool IsPaid { get; set; } = false;
+        public string DeliveryAddress { get; set; }
+        public string Notes { get; set; }
         public ApplicationUser User { get; set; }
 
         public virtual ICollection<OrderItem> OrderItems { get; set; }

@@ -1,4 +1,4 @@
-﻿@using E_commerce_Website__Skincare_.Models
+﻿@using Jumla.Models
 @model IEnumerable<Order>
 
 @{
@@ -66,7 +66,7 @@
                 <tbody>
                     @foreach (var order in Model)
                     {
-                        <tr data-status="@order.Status"
+                        <tr data-status="@order.Status.ToString()"
                             data-date="@order.OrderDate.ToString("yyyy-MM-dd")"
                             data-customer="@order.User?.FullName?.ToLower()"
                             data-id="@order.Id">
@@ -112,14 +112,14 @@
                                 @{
                                     var badgeClass = order.Status switch
                                     {
-                                        "Completed" => "badge-shipped",
-                                        "Processing" => "badge-processing",
-                                        "Cancelled" => "badge-cancelled",
+                                        OrderStatus.Completed => "badge-shipped",
+                                        OrderStatus.Processing => "badge-processing",
+                                        OrderStatus.Cancelled => "badge-cancelled",
                                         _ => "badge-pending"
                                     };
                                 }
                                 <span class="badge @badgeClass status-label" data-order-id="@order.Id">
-                                    @order.Status
+                                    @order.Status.ToString()
                                 </span>
                             </td>
 

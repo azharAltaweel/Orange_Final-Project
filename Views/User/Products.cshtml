@@ -52,7 +52,7 @@
 
                     <input type="text"
                            name="search"
-                           placeholder="Search skincare products..." />
+                           placeholder="Search wholesale products..." />
 
                     <button type="submit">
                         Search
@@ -125,6 +125,10 @@
                                     @product.Category.Name
                                 </p>
 
+                                <p class="text-muted small mb-1">
+                                    Min. @product.MinOrderQuantity @product.Unit
+                                </p>
+
                                 <h5 class="fw-bold">
                                     @product.Name
                                 </h5>
@@ -136,11 +140,10 @@
                                         <div class="d-flex align-items-center gap-2">
 
                                             <h6 class="discount-price mb-0">
-                                                $@finalPrice.ToString("0.00")
+                                                JOD @finalPrice.ToString("0.00")
                                             </h6>
-
                                             <span class="original-price">
-                                                $@product.Price
+                                                JOD @product.WholesalePrice.ToString("0.00")
                                             </span>
 
                                         </div>
@@ -148,7 +151,7 @@
                                     else
                                     {
                                         <h6 class="fw-bold mb-0">
-                                            $@product.Price
+                                            JOD @product.WholesalePrice.ToString("0.00")
                                         </h6>
                                     }
 

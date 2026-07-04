@@ -5,13 +5,13 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using E_commerce_Website__Skincare_.Models;
+using Jumla.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace E_commerce_Website__Skincare_.Areas.Identity.Pages.Account
+namespace Jumla.Areas.Identity.Pages.Account
 {
     public class LogoutModel : PageModel
     {

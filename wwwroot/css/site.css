@@ -1,25 +1,110 @@
+/* ===========================================
+   JUMLA / MAKHZAN DESIGN SYSTEM (STITCH)
+=========================================== */
+
+:root {
+    --primary: #006130;
+    --primary-hover: #005228;
+    --secondary: #465f88;
+    --background: #f8f9ff;
+    --surface: #ffffff;
+    --surface-soft: #eef4ff;
+    --surface-medium: #e5eeff;
+    --border: #becabd;
+    --text-main: #121c28;
+    --text-muted: #3f4940;
+    --success: #107c41;
+    --danger: #ba1a1a;
+}
+
+/* Global */
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--background);
+    color: var(--text-main);
 }
+
+/* Focus */
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.12rem white, 0 0 0 0.25rem rgba(0, 97, 48, 0.25);
+}
+
+/* ===========================================
+   NAVBAR
+=========================================== */
+
+.navbar {
+    background: var(--surface) !important;
+    border-bottom: 1px solid var(--border);
+}
+
+    .navbar .material-symbols-outlined {
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: 0.25s ease;
+    }
+
+        .navbar .material-symbols-outlined:hover {
+            color: var(--primary);
+        }
+
+/* ===========================================
+   DROPDOWN
+=========================================== */
+
+.dropdown-menu {
+    border: 1px solid var(--border) !important;
+    border-radius: 16px !important;
+    background: var(--surface) !important;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08) !important;
+    padding: 10px !important;
+}
+
+.dropdown-item {
+    border-radius: 12px !important;
+    color: var(--text-main) !important;
+    transition: 0.25s ease !important;
+    font-size: 14px !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px !important;
+}
+
+    .dropdown-item:hover {
+        background: var(--surface-soft) !important;
+        color: var(--primary) !important;
+    }
+
+    .dropdown-item.text-danger:hover {
+        background: #ffe7e7 !important;
+        color: var(--danger) !important;
+    }
+
+    .dropdown-item span {
+        font-size: 19px !important;
+    }
+
+/* ===========================================
+   TABLES
+=========================================== */
 
 .custom-table {
     border-collapse: separate;
@@ -28,122 +113,107 @@ body {
 
     .custom-table thead th {
         border: none;
-        background: #f8f9fa;
-        color: #555;
+        background: var(--surface-medium);
+        color: var(--text-muted);
         font-weight: 600;
         padding: 16px;
     }
 
     .custom-table tbody tr {
-        background: white;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        border-radius: 12px;
-        transition: 0.2s ease;
+        background: var(--surface);
+        border-radius: 16px;
+        transition: 0.25s ease;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.04);
     }
 
         .custom-table tbody tr:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            box-shadow: 0 8px 22px rgba(0,0,0,0.08);
         }
 
     .custom-table tbody td {
         padding: 18px 16px;
-        border-top: none;
-        border-bottom: none;
+        border: none;
         vertical-align: middle;
     }
 
-    /* Rounded corners for row */
     .custom-table tbody tr td:first-child {
-        border-top-left-radius: 12px;
-        border-bottom-left-radius: 12px;
+        border-top-left-radius: 16px;
+        border-bottom-left-radius: 16px;
     }
 
     .custom-table tbody tr td:last-child {
-        border-top-right-radius: 12px;
-        border-bottom-right-radius: 12px;
+        border-top-right-radius: 16px;
+        border-bottom-right-radius: 16px;
     }
 
-/* ════════════════════════════════════════════════ */
-/*               GLOWCARE SWEETALERT2 STYLES        */
-/* ════════════════════════════════════════════════ */
-.swal2-popup.glowcare-swal-popup {
-    font-family: 'Inter', sans-serif !important;
-    border-radius: 20px !important;
-    background: #fdf9f4 !important; /* Premium cream background */
-    border: 1px solid rgba(99, 95, 64, 0.12) !important;
-    box-shadow: 0 15px 40px rgba(99, 95, 64, 0.1) !important;
-    padding: 2.5rem 2rem !important;
+/* ===========================================
+   SWEET ALERT (MATCH STITCH)
+=========================================== */
+
+.swal2-popup.jumla-swal-popup {
+    font-family: 'IBM Plex Sans', sans-serif !important;
+    border-radius: 24px !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.08) !important;
+    padding: 2rem !important;
 }
 
-.swal2-title.glowcare-swal-title {
-    font-family: 'Playfair Display', serif !important;
-    color: #635f40 !important; /* GlowCare signature olive */
+.swal2-title.jumla-swal-title {
+    color: var(--primary) !important;
     font-size: 24px !important;
     font-weight: 700 !important;
-    margin-bottom: 0.8rem !important;
 }
 
-.swal2-html-container.glowcare-swal-html {
-    font-family: 'Inter', sans-serif !important;
-    color: #4a4a4a !important;
+.swal2-html-container.jumla-swal-html {
+    color: var(--text-muted) !important;
     font-size: 14px !important;
-    line-height: 1.6 !important;
-    margin-bottom: 1.5rem !important;
 }
 
-.swal2-confirm.glowcare-swal-confirm {
-    background-color: #635f40 !important; /* GlowCare signature olive */
-    color: #ffffff !important;
+/* Confirm Button */
+
+.swal2-confirm.jumla-swal-confirm {
+    background: var(--primary) !important;
+    color: white !important;
     border: none !important;
-    border-radius: 8px !important;
-    padding: 12px 30px !important;
-    font-size: 14px !important;
+    border-radius: 14px !important;
+    padding: 12px 28px !important;
     font-weight: 600 !important;
-    letter-spacing: 0.5px !important;
-    box-shadow: 0 4px 12px rgba(99, 95, 64, 0.2) !important;
-    transition: all 0.25s ease !important;
-    outline: none !important;
+    transition: .25s ease !important;
 }
 
-.swal2-confirm.glowcare-swal-confirm:hover {
-    background-color: #4f4b32 !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 6px 16px rgba(99, 95, 64, 0.3) !important;
-}
+    .swal2-confirm.jumla-swal-confirm:hover {
+        background: var(--primary-hover) !important;
+        transform: translateY(-1px);
+    }
 
-.swal2-cancel.glowcare-swal-cancel {
-    background-color: #eae3db !important;
-    color: #555555 !important;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 12px 30px !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.5px !important;
-    transition: all 0.25s ease !important;
-    margin-left: 10px !important;
-    outline: none !important;
-}
+/* Cancel Button */
 
-.swal2-cancel.glowcare-swal-cancel:hover {
-    background-color: #dfd6cb !important;
-    color: #333333 !important;
-    transform: translateY(-1px) !important;
-}
-
-/* Toast custom styles */
-.swal2-popup.swal2-toast.glowcare-swal-toast {
-    background: #fdf9f4 !important;
-    border: 1px solid rgba(99, 95, 64, 0.15) !important;
-    border-radius: 12px !important;
-    box-shadow: 0 8px 24px rgba(99, 95, 64, 0.12) !important;
-    padding: 12px 18px !important;
-}
-
-.swal2-popup.swal2-toast.glowcare-swal-toast .swal2-title {
-    color: #635f40 !important;
-    font-family: 'Inter', sans-serif !important;
-    font-size: 13px !important;
+.swal2-cancel.jumla-swal-cancel {
+    background: var(--surface-soft) !important;
+    color: var(--secondary) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 14px !important;
+    padding: 12px 28px !important;
     font-weight: 600 !important;
 }
+
+    .swal2-cancel.jumla-swal-cancel:hover {
+        background: var(--surface-medium) !important;
+    }
+
+/* Toast */
+
+.swal2-popup.swal2-toast.jumla-swal-toast {
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08) !important;
+}
+
+    .swal2-popup.swal2-toast.jumla-swal-toast .swal2-title {
+        color: var(--primary) !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+    }

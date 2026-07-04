@@ -11,7 +11,7 @@ async function loadCart() {
         if (response.ok) {
             const cart = await response.json();
             // Sync with local storage for compatibility with other layout views
-            localStorage.setItem('glowcare_cart', JSON.stringify(cart));
+            localStorage.setItem('jumla_cart', JSON.stringify(cart));
             renderCart(cart);
             if (typeof updateCartBadge === 'function') updateCartBadge();
         } else {
@@ -20,7 +20,7 @@ async function loadCart() {
     } catch (error) {
         console.error('Error fetching dynamic cart items from DB/Session:', error);
         // Fallback to local storage in case of server offline
-        const cart = JSON.parse(localStorage.getItem('glowcare_cart')) || [];
+        const cart = JSON.parse(localStorage.getItem('jumla_cart')) || [];
         renderCart(cart);
     }
 }
@@ -38,7 +38,7 @@ function renderCart(cart) {
             <div class="empty-cart animate-fade-in">
                 <i class="bi bi-cart-x"></i>
                 <h3>Your cart is empty</h3>
-                <p class="text-muted">Explore our botanical rituals and find your glow.</p>
+                <p class="text-muted">Browse our wholesale catalog and start ordering.</p>
                 <a href="/" class="continue-shopping">Back to Store</a>
             </div>
         `;
@@ -62,7 +62,7 @@ function renderCart(cart) {
                         <img src="${item.image}" class="cart-item-img" alt="${item.name}">
                         <div class="d-flex flex-column justify-content-center">
                             <h6 class="item-title">${item.name}</h6>
-                            <span class="item-meta">${item.size || 'Standard Size'} / ${item.category || 'Skincare'}</span>
+                            <span class="item-meta">${item.size || 'Standard Size'} / ${item.category || 'General'}</span>
                             <button class="remove-btn" onclick="removeItem(${item.id})">
                                 <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
                                 Remove
@@ -115,25 +115,25 @@ function applyPromoCode() {
     const input = document.querySelector('.coupon-input');
     const code = input.value.trim().toLowerCase();
 
-    if (code === 'skincare') {
+    if (code === 'altaweel') {
         activeDiscount = 0.15; // 15% discount
-        appliedPromo = 'skincare';
-        if (typeof GlowAlert !== 'undefined') {
-            GlowAlert.success('Success!', 'Promo code applied! You got a 15% discount.');
+        appliedPromo = 'altaweel';
+        if (typeof JumlaAlert !== 'undefined') {
+            JumlaAlert.success('Success!', 'Promo code applied! You got a 15% discount.');
         } else {
             alert('Promo code applied! You got a 15% discount.');
         }
     } else {
         activeDiscount = 0;
         appliedPromo = null;
-        if (typeof GlowAlert !== 'undefined') {
-            GlowAlert.error('Invalid Code', 'The promo code you entered is invalid.');
+        if (typeof JumlaAlert !== 'undefined') {
+            JumlaAlert.error('Invalid Code', 'The promo code you entered is invalid.');
         } else {
             alert('Invalid promo code.');
         }
     }
 
-    const cart = JSON.parse(localStorage.getItem('glowcare_cart')) || [];
+    const cart = JSON.parse(localStorage.getItem('jumla_cart')) || [];
     renderCart(cart);
 }
 
@@ -151,8 +151,8 @@ async function updateQty(productId, change) {
 }
 
 function removeItem(productId) {
-    if (typeof GlowAlert !== 'undefined') {
-        GlowAlert.confirm('Remove Item?', 'Are you sure you want to remove this item from your ritual?').then(async (result) => {
+    if (typeof JumlaAlert !== 'undefined') {
+        JumlaAlert.confirm('Remove Item?', 'Are you sure you want to remove this item from your cart?').then(async (result) => {
             if (result.isConfirmed) {
                 try {
                     const response = await fetch(`/Cart/RemoveFromCart?productId=${productId}`, {
@@ -160,7 +160,7 @@ function removeItem(productId) {
                     });
                     if (response.ok) {
                         await loadCart();
-                        GlowAlert.toast('Item removed from cart.');
+                        JumlaAlert.toast('Item removed from cart.');
                     }
                 } catch (error) {
                     console.error('Error removing item:', error);
@@ -173,7 +173,7 @@ function removeItem(productId) {
 }
 
 async function confirmRemoveItemLegacy(productId) {
-    if (confirm('Are you sure you want to remove this item from your ritual?')) {
+    if (confirm('Are you sure you want to remove this item from your cart?')) {
         try {
             const response = await fetch(`/Cart/RemoveFromCart?productId=${productId}`, {
                 method: 'POST'
@@ -189,10 +189,10 @@ async function confirmRemoveItemLegacy(productId) {
 
 // Checkout Handler
 async function proceedToCheckout() {
-    const cart = JSON.parse(localStorage.getItem('glowcare_cart')) || [];
+    const cart = JSON.parse(localStorage.getItem('jumla_cart')) || [];
     if (cart.length === 0) {
-        if (typeof GlowAlert !== 'undefined') {
-            GlowAlert.error('Cart Empty', 'Your cart is empty. Add some rituals to your bag first.');
+        if (typeof JumlaAlert !== 'undefined') {
+            JumlaAlert.error('Cart Empty', 'Your cart is empty. Add some goods to your bag first.');
         } else {
             alert('Your cart is empty.');
         }
@@ -211,8 +211,8 @@ window.addToCart = async function(product) {
         });
         if (response.ok) {
             if (typeof updateCartBadge === 'function') updateCartBadge();
-            if (typeof GlowAlert !== 'undefined') {
-                GlowAlert.toast('Added ' + product.name + ' to cart!');
+            if (typeof JumlaAlert !== 'undefined') {
+                JumlaAlert.toast('Added ' + product.name + ' to cart!');
             } else {
                 console.log('Added to cart:', product.name);
             }

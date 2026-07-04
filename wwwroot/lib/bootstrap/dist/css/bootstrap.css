@@ -6321,7 +6321,10 @@ textarea.form-control-lg {
   min-height: 1.2em;
 }
 
-.placeholder-glow .placeholder {
+.placeholder-
+
+
+.placeholder {
   -webkit-animation: placeholder-glow 2s ease-in-out infinite;
   animation: placeholder-glow 2s ease-in-out infinite;
 }

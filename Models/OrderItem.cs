@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace E_commerce_Website__Skincare_.Models
+namespace Jumla.Models
 {
     public class OrderItem
     {

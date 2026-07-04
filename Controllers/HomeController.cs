@@ -1,8 +1,8 @@
 using System.Diagnostics;
-using E_commerce_Website__Skincare_.Models;
+using Jumla .Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace E_commerce_Website__Skincare_.Controllers
+namespace Jumla.Controllers
 {
     public class HomeController : Controller
     {
@@ -17,7 +17,7 @@ namespace E_commerce_Website__Skincare_.Controllers
         {
             return View();
         }
-
+        
         public IActionResult Privacy()
         {
             return View();

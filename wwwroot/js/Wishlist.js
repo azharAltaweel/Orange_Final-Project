@@ -48,7 +48,7 @@ function loadWishlist() {
     <div class="wishlist-info">
 
         <span class="wishlist-category">
-            Skincare Favorite
+'Wholesale Item'
         </span>
 
         <h4>

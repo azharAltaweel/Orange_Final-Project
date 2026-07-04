@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace E_commerce_Website__Skincare_.Models
+namespace Jumla
+    .Models
 {
     public class Testimonial
     {

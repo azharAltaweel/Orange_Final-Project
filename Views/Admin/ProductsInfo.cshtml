@@ -1,4 +1,4 @@
-﻿@model IEnumerable<E_commerce_Website__Skincare_.Models.Product>
+﻿@model IEnumerable<Jumla.Models.Product >
 
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -76,6 +76,10 @@
                         <th>Product</th>
                         <th>Category</th>
                         <th>Price</th>
+
+                        <th>Wholesale Price</th>
+                        <th>Min. Order</th>
+
                         <th>Discount</th>
                         <th>Stock</th>
                         <th>Actions</th>
@@ -117,6 +121,10 @@
                             <td>
                                 $@product.Price
                             </td>
+
+                            <td>$@product.WholesalePrice</td>
+                            <td>@product.MinOrderQuantity @product.Unit</td>
+
                             <td>
                                 @if (product.Discount != null)
                                 {
@@ -230,8 +238,26 @@
                                                        name="Price"
                                                        value="@product.Price"
                                                        class="form-control" />
-
                                             </div>
+
+
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Wholesale Price</label>
+                                                <input type="number" step="0.01" name="WholesalePrice" value="@product.WholesalePrice" class="form-control" />
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">Min. Order Quantity</label>
+                                                    <input type="number" name="MinOrderQuantity" value="@product.MinOrderQuantity" class="form-control" />
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">Unit</label>
+                                                    <input type="text" name="Unit" value="@product.Unit" class="form-control" />
+                                                </div>
+                                            </div>
+
+
                                             <div class="mb-3">
 
                                                 <label class="form-label">
@@ -438,6 +464,23 @@
                                class="form-control" />
 
                     </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Wholesale Price</label>
+                        <input type="number" step="0.01" name="WholesalePrice" class="form-control" required />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Min. Order Quantity</label>
+                            <input type="number" name="MinOrderQuantity" class="form-control" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Unit</label>
+                            <input type="text" name="Unit" class="form-control" placeholder="carton- peice- kilo " />
+                        </div>
+                    </div>
+
+
                     <!-- DISCOUNT -->
 
                     <div class="mb-3">

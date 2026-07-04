@@ -1,7 +1,7 @@
 ﻿
 body {
-    font-family: 'Inter', sans-serif;
-    background-color: #fdf9f4;
+    font-family: 'IBM Plex Sans', 'Inter', sans-serif;
+    background-color: #f8f9ff;
 }
 
 /* Brand */
@@ -9,7 +9,7 @@ body {
     font-family: 'Playfair Display', serif;
     font-size: 32px;
     font-weight: 600;
-    color: #635f40 !important;
+    color: #006130 !important;
     text-decoration: none;
 }
 
@@ -26,7 +26,7 @@ body {
 }
 
     .nav-link:hover {
-        color: #635f40 !important;
+        color: #006130 !important;
     }
 
 /* Search */
@@ -43,7 +43,7 @@ body {
 }
 
     .nav-icons span:hover {
-        color: #635f40;
+        color: #006130;
     }
 
 /* Footer */
@@ -64,7 +64,7 @@ footer {
 }
 
     .footer-link:hover {
-        color: #635f40;
+        color: #006130;
     }
 
 /* Tablet & Mobile */

@@ -1,9 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace E_commerce_Website__Skincare_.Models.ViewModels
+namespace Jumla.Models.ViewModels
 {
     public class ProfileViewModel
     {
+        [Required]
+        [Display(Name = "Business Name")]
+        public string BusinessName { get; set; }
+
         [Required]
         [Display(Name = "Full Name")]
         public string FullName { get; set; }

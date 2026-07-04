@@ -1,5 +1,5 @@
 @using Microsoft.AspNetCore.Identity
-@using E_commerce_Website__Skincare_.Models
+@using Jumla.Models
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 <!DOCTYPE html>
@@ -15,13 +15,13 @@
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/E_commerce_Website__Skincare_.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Jumla.styles.css" asp-append-version="true" />
     
     <style>
         .brand-text {
             font-family: 'Playfair Display', serif;
             font-weight: 700;
-            color: #635f40;
+            color: #006130;
             letter-spacing: 1px;
         }
         .cursor-pointer { cursor: pointer; }
@@ -30,7 +30,7 @@
             position: absolute;
             top: -5px;
             right: -8px;
-            background: #635f40;
+            background: #006130;
             color: white;
             font-size: 10px;
             width: 18px;
@@ -50,7 +50,7 @@
         }
 
         .nav-icons span:hover {
-            color: #635f40;
+            color: #006130;
         }
 
         /* Premium Dropdown Styles */
@@ -76,7 +76,7 @@
 
         .dropdown-item:hover {
             background-color: #fdf9f4 !important;
-            color: #635f40 !important;
+            color: #006130 !important;
         }
 
         .dropdown-item.text-danger:hover {
@@ -94,7 +94,7 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm fixed-top py-3">
             <div class="container">
-                <a class="navbar-brand brand-text fs-3" asp-area="" asp-controller="Home" asp-action="Index">GLOWCARE</a>
+                <a class="navbar-brand brand-text fs-3" asp-area="" asp-controller="Home" asp-action="Index">JUMLA</a>
                 
                 <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                     <span class="material-symbols-outlined">menu</span>
@@ -139,7 +139,7 @@
                                     @if (User.IsInRole("Admin"))
                                     {
                                         <li>
-                                            <a class="dropdown-item fw-medium" asp-controller="Admin" asp-action="Dashboard" style="color: #635f40;">
+                                            <a class="dropdown-item fw-medium" asp-controller="Admin" asp-action="Dashboard" style="color: #006130;">
                                                 <span class="material-symbols-outlined">dashboard</span> Admin Panel
                                             </a>
                                         </li>
@@ -190,16 +190,16 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2026 - E_commerce_Website__Skincare_ - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2026 - Jumla - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     
-    <!-- SweetAlert2 & GlowCare Custom Alerts -->
+    <!-- SweetAlert2 & jumla Custom Alerts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="~/js/glowcare-alerts.js" asp-append-version="true"></script>
+    <script src="~/js/jumla-alerts.js" asp-append-version="true"></script>
     
     @if (TempData["Success"] != null || TempData["SuccessMessage"] != null || TempData["Error"] != null || TempData["ErrorMessage"] != null)
     {
@@ -209,9 +209,9 @@
                 var successMsg = '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode((string)(TempData["Success"] ?? TempData["SuccessMessage"] ?? "")))';
                 var errorMsg = '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode((string)(TempData["Error"] ?? TempData["ErrorMessage"] ?? "")))';
                 if (successMsg) {
-                    GlowAlert.success('Success!', successMsg);
+                    JumlaAlert.success('Success!', successMsg);
                 } else if (errorMsg) {
-                    GlowAlert.error('Oops...', errorMsg);
+                    JumlaAlert.error('Oops...', errorMsg);
                 }
             })();
         </script>

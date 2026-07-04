@@ -1,11 +1,11 @@
-using E_commerce_Website__Skincare_.Models;
-using E_commerce_Website__Skincare_.Models.ViewModels;
+using Jumla.Models;
+using Jumla.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using E_commerce_Website__Skincare_.Data;
+using Jumla.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace E_commerce_Website__Skincare_.Controllers
+namespace Jumla.Controllers
 {
     public class AccountController : Controller
     {
@@ -121,6 +121,7 @@ namespace E_commerce_Website__Skincare_.Controllers
             var newUser = new ApplicationUser()
             {
                 FullName = registerVM.FullName,
+                BusinessName = registerVM.BusinessName,
                 Email = registerVM.Email,
                 UserName = registerVM.Email,
                 PhoneNumber = registerVM.PhoneNumber
@@ -136,13 +137,13 @@ namespace E_commerce_Website__Skincare_.Controllers
                 // Merge guest session cart to database cart
                 await MergeSessionCartToDbAsync(newUser.Id);
 
-                TempData["Success"] = "Account created successfully! Welcome to GlowCare.";
+                TempData["Success"] = "Account created successfully! Welcome to Jumla.";
                 
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 {
                     return Redirect(returnUrl);
                 }
-                return RedirectToAction("HomePage", "User");
+                return RedirectToAction("Login", "Account");
             }
             else
             {
@@ -172,17 +173,20 @@ namespace E_commerce_Website__Skincare_.Controllers
                 {
                     Id = "#" + o.Id.ToString(),
                     Date = o.OrderDate,
-                    Status = o.Status,
+                    Status = o.Status.ToString(),
                     Total = o.TotalAmount
+
+
                 })
                 .ToListAsync();
 
             var model = new ProfileViewModel()
             {
                 FullName = user.FullName,
+                BusinessName = user.BusinessName,  
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
-                MemberSince = "GlowCare Member", 
+                MemberSince = "Jumla Member", 
                 OrderHistory = orders 
             };
 

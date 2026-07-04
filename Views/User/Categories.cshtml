@@ -1,108 +1,11 @@
-﻿@model IEnumerable<E_commerce_Website__Skincare_.Models.Category>
+﻿@model IEnumerable<Jumla.Models.Category>
 @{
     Layout = "~/Views/Shared/_UserLayout.cshtml";
     ViewData["Title"] = "Categories";
-    var categories = Model?.ToList() ?? new List<E_commerce_Website__Skincare_.Models.Category>();
+    var categories = Model?.ToList() ?? new List<Jumla.Models.Category>();
 }
- @* <link href="~/css/CategoryUser.css" rel="stylesheet" />  *@
+ <link href="~/css/CategoryUser.css" rel="stylesheet" />  
 
- <style>
-    .categories-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 24px;
-        padding: 20px;
-    }
-
-    .cat-card {
-        background-color: #ffffff;
-        border-radius: 20px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        overflow: hidden;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        display: flex;
-        flex-direction: column;
-    }
-
-        .cat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-    .cat-img-wrap {
-        width: 100%;
-        height: 260px;
-        overflow: hidden;
-    }
-
-        .cat-img-wrap img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-    .cat-body {
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        flex-grow: 1;
-    }
-
-    .cat-label {
-        font-size: 14px;
-        color: #8c8c8c;
-        font-weight: 500;
-    }
-
-    .cat-name {
-        font-size: 24px;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin: 0;
-        text-transform: lowercase;
-    }
-
-    .cat-count {
-        font-size: 18px;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin: 4px 0 14px 0;
-    }
-
-    .cat-btn {
-        display: block;
-        text-align: center;
-        background-color: #1e2229;
-        color: #ffffff;
-        text-decoration: none;
-        padding: 14px 0;
-        border-radius: 25px;
-        font-size: 15px;
-        font-weight: 600;
-        transition: background-color 0.2s ease;
-        margin-top: auto;
-    }
-
-        .cat-btn:hover {
-            background-color: #313742;
-            color: #ffffff;
-        }
-
-    .empty-cats {
-        text-align: center;
-        padding: 50px 20px;
-        color: #8c8c8c;
-    }
-
-        .empty-cats i {
-            font-size: 48px;
-            margin-bottom: 15px;
-            color: #ccc;
-        }
-
- </style>
 <main class="container py-5" style="max-width:1140px;">
 
     <!-- ── Hero ── -->
@@ -127,7 +30,7 @@
 
                     <!-- Body -->
                     <div class="cat-body">
-                        <span class="cat-label">Collection</span>
+                        <span class="cat-label">Department</span>
                         <h2 class="cat-name">@cat.Name</h2>
                         @if (cat.Products != null)
                         {

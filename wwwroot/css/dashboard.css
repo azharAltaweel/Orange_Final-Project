@@ -5,22 +5,28 @@
 }
 
 :root {
-    --cream: #F4F1EB;
-    --cream-dark: #EAE6DC;
-    --olive: #7A8C5E;
-    --olive-dark: #5E6E46;
-    --olive-light: #9BAD7A;
-    --charcoal: #2C2C2A;
-    --muted: #6B6B68;
-    --border: #D8D4C8;
-    --white: #FFFFFF;
+    /* Stitch / Makhzan Design System */
+
+    --background: #f8f9ff;
+    --surface: #ffffff;
+    --surface-soft: #eef4ff;
+    --surface-medium: #e5eeff;
+    --cream: #eef4ff;
+    --cream-dark: #dfe9fa;
+    --olive: #006130;
+    --olive-dark: #005228;
+    --olive-light: #7ada95;
+    --charcoal: #121c28;
+    --muted: #3f4940;
+    --border: #becabd;
+    --white: #ffffff;
+    --pink-badge: #ffe2df;
+    --pink-text: #ba1a1a;
+    --green-badge: #d8f4df;
+    --green-text: #107c41;
+    --blue-badge: #d6e3ff;
+    --blue-text: #465f88;
     --sidebar-w: 220px;
-    --pink-badge: #F9D6D6;
-    --pink-text: #B24A4A;
-    --green-badge: #D6EDD6;
-    --green-text: #3A6E3A;
-    --blue-badge: #D6E4F0;
-    --blue-text: #2A5F8A;
 }
 
 body {

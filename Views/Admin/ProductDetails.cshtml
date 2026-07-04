@@ -1,4 +1,4 @@
-﻿@model E_commerce_Website__Skincare_.Models.Product
+﻿@model Jumla.Models.Product
 
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -17,7 +17,7 @@
             </h2>
 
             <p class="text-muted mb-0">
-                Manage skincare product information
+                Manage product information
             </p>
         </div>
 
@@ -105,6 +105,18 @@
                     </span>
 
                 </div>
+
+                <!--wholesale and min order qty-->
+
+                <div class="mb-4">
+                    <span class="category-badge" style="background:#dff4e5;color:#2d8a4d;">
+                        Wholesale: $@Model.WholesalePrice
+                    </span>
+                    <span class="category-badge ms-2" style="background:#e8f0fe;color:#1a56db;">
+                        Min. Order: @Model.MinOrderQuantity @Model.Unit
+                    </span>
+                </div>
+
 
                 <!-- STOCK -->
 

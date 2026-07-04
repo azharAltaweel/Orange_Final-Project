@@ -1,4 +1,4 @@
-﻿@using E_commerce_Website__Skincare_.Models
+﻿@using Jumla.Models
 @model IEnumerable<ApplicationUser>
 
 @{
@@ -31,10 +31,10 @@
 
                     <tr>
                         <th>Full Name</th>
+                        <th>Business Name</th>
                         <th>Email</th>
                         <th>Phone</th>
-                        <th>Username</th>
-                        @* <th>Actions</th> *@
+                        <th>Address</th>
                     </tr>
 
                 </thead>
@@ -46,12 +46,13 @@
                         <tr>
 
                             <td>@user.FullName</td>
+                            <td>@(user.BusinessName ?? "—")</td>
 
                             <td>@user.Email</td>
 
                             <td>@user.PhoneNumber</td>
 
-                            <td>@user.UserName</td>
+                            <td>@(user.Address ?? "—")</td>
 
                             @* <td>
 

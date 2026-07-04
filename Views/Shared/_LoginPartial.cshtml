@@ -1,5 +1,5 @@
 @using Microsoft.AspNetCore.Identity
-@using E_commerce_Website__Skincare_.Models
+@using Jumla.Models
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
@@ -9,7 +9,7 @@
     @if (User.IsInRole("Admin"))
     {
         <li class="nav-item">
-            <a class="nav-link fw-bold d-flex align-items-center gap-1" asp-area="" asp-controller="Admin" asp-action="Dashboard" title="Admin Dashboard" style="color: #635f40;">
+            <a class="nav-link fw-bold d-flex align-items-center gap-1" asp-area="" asp-controller="Admin" asp-action="Dashboard" title="Admin Dashboard" style="color: #006130;">
                 <span class="material-symbols-outlined align-middle">dashboard</span> Admin Panel
             </a>
         </li>
